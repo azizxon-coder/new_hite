@@ -1,0 +1,2818 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HITE — Штучные предметы интерьера из эко-материалов</title>
+
+  <!-- Google Fonts: Cormorant Garamond & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#FAFAF7',
+            stone: '#F2F0EB',
+            ink: '#1A1A1A',
+            muted: '#6B6B6B',
+            accent: '#82B5D1',
+            hairline: '#E5E3DD',
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          letterSpacing: {
+            widestPlus: '0.24em',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+      background-color: #FAFAF7;
+      color: #1A1A1A;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #FAFAF7;
+      color: #1A1A1A;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .font-serif-editorial {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    /* Тонкий скроллбар в духе галереи */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAFAF7;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D6D3CB;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #82B5D1;
+    }
+
+    /* Плавный zoom галерейных изображений */
+    .gallery-img-wrap {
+      overflow: hidden;
+      background-color: #F2F0EB;
+    }
+    .gallery-img-wrap img {
+      transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+    .group:hover .gallery-img-wrap img {
+      transform: scale(1.035);
+    }
+
+    /* Анимация появления экрана */
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .view-animate {
+      animation: fadeSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Кастомные чекбоксы */
+    input[type='checkbox'].hite-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid #C8C5BC;
+      background-color: transparent;
+      cursor: pointer;
+      display: inline-grid;
+      place-content: center;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    input[type='checkbox'].hite-checkbox:hover {
+      border-color: #82B5D1;
+    }
+    input[type='checkbox'].hite-checkbox:checked {
+      background-color: #1A1A1A;
+      border-color: #1A1A1A;
+    }
+    input[type='checkbox'].hite-checkbox:checked::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background-color: #FAFAF7;
+      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+
+    /* Убираем стрелки у number input */
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-[#82B5D1]/25 selection:text-[#1A1A1A]">
+
+  <!-- ==================== ШАПКА САЙТА ==================== -->
+  <header class="sticky top-0 z-40 bg-[#FAFAF7]/95 backdrop-blur-md border-b border-[#E5E3DD]">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Левая часть: Бургер (моб) + Навигация (десктоп) -->
+      <div class="flex items-center gap-8 flex-1">
+        <button
+          id="mobile-menu-btn"
+          onclick="toggleMobileMenu()"
+          aria-label="Открыть меню"
+          class="lg:hidden p-2 -ml-2 text-[#1A1A1A] hover:text-[#82B5D1] transition-colors"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5h16.5M3.75 16.5h16.5" />
+          </svg>
+        </button>
+
+        <nav class="hidden lg:flex items-center gap-9 text-[13px] tracking-[0.06em] uppercase font-normal">
+          <button
+            onclick="navigateTo('home')"
+            data-nav="home"
+            class="nav-link relative py-1 text-[#1A1A1A] hover:text-[#82B5D1] transition-colors"
+          >
+            Главная
+          </button>
+          <button
+            onclick="navigateTo('catalog', { resetFilters: false })"
+            data-nav="catalog"
+            class="nav-link relative py-1 text-[#1A1A1A] hover:text-[#82B5D1] transition-colors"
+          >
+            Каталог
+          </button>
+          <button
+            onclick="navigateTo('workshop')"
+            data-nav="workshop"
+            class="nav-link relative py-1 text-[#1A1A1A] hover:text-[#82B5D1] transition-colors"
+          >
+            О мастерской
+          </button>
+        </nav>
+      </div>
+
+      <!-- Центр: Логотип HITE -->
+      <div class="flex-shrink-0 text-center">
+        <button
+          onclick="navigateTo('home')"
+          class="font-serif-editorial text-3xl sm:text-[34px] tracking-[0.26em] font-normal text-[#1A1A1A] hover:text-[#82B5D1] transition-colors pl-[0.26em]"
+        >
+          HITE
+        </button>
+      </div>
+
+      <!-- Правая часть: Поиск, Избранное, Корзина -->
+      <div class="flex items-center justify-end gap-3 sm:gap-6 flex-1">
+        <!-- Поиск -->
+        <button
+          onclick="openSearchModal()"
+          aria-label="Поиск"
+          class="flex items-center gap-2 p-2 text-[#1A1A1A] hover:text-[#82B5D1] transition-colors group"
+        >
+          <svg class="w-[19px] h-[19px]" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7.5" />
+            <path stroke-linecap="round" d="M20 20l-3.8-3.8" />
+          </svg>
+          <span class="hidden xl:inline text-[13px] tracking-[0.04em] text-[#6B6B6B] group-hover:text-[#82B5D1] transition-colors">
+            Поиск
+          </span>
+        </button>
+
+        <!-- Избранное -->
+        <button
+          onclick="navigateTo('favorites')"
+          aria-label="Избранное"
+          class="relative flex items-center gap-1.5 p-2 text-[#1A1A1A] hover:text-[#82B5D1] transition-colors"
+        >
+          <svg class="w-[19px] h-[19px]" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+            />
+          </svg>
+          <span
+            id="fav-badge"
+            class="text-[11px] font-medium tracking-wider text-[#1A1A1A] bg-[#F2F0EB] px-1.5 py-0.5 rounded-full min-w-[20px] text-center transition-colors"
+          >
+            0
+          </span>
+        </button>
+
+        <!-- Корзина -->
+        <button
+          onclick="navigateTo('cart')"
+          aria-label="Корзина"
+          class="relative flex items-center gap-1.5 p-2 -mr-2 text-[#1A1A1A] hover:text-[#82B5D1] transition-colors"
+        >
+          <svg class="w-[19px] h-[19px]" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"
+            />
+          </svg>
+          <span
+            id="cart-badge"
+            class="text-[11px] font-medium tracking-wider text-[#1A1A1A] bg-[#F2F0EB] px-1.5 py-0.5 rounded-full min-w-[20px] text-center transition-colors"
+          >
+            0
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Мобильное выпадающее меню -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#FAFAF7] border-b border-[#E5E3DD] px-6 py-8">
+      <nav class="flex flex-col space-y-5 text-sm uppercase tracking-[0.12em]">
+        <button onclick="navigateTo('home'); toggleMobileMenu()" class="text-left py-1 hover:text-[#82B5D1]">
+          Главная
+        </button>
+        <button onclick="navigateTo('catalog'); toggleMobileMenu()" class="text-left py-1 hover:text-[#82B5D1]">
+          Каталог коллекции
+        </button>
+        <button onclick="navigateTo('workshop'); toggleMobileMenu()" class="text-left py-1 hover:text-[#82B5D1]">
+          О мастерской в Подмосковье
+        </button>
+        <div class="pt-4 border-t border-[#E5E3DD] flex flex-col space-y-3 text-xs text-[#6B6B6B] normal-case tracking-normal">
+          <button onclick="filterByCategory('Светильники'); toggleMobileMenu()" class="text-left hover:text-[#1A1A1A]">
+            — Светильники
+          </button>
+          <button onclick="filterByCategory('Мелкая мебель'); toggleMobileMenu()" class="text-left hover:text-[#1A1A1A]">
+            — Мелкая мебель
+          </button>
+          <button onclick="filterByCategory('Крупная мягкая мебель'); toggleMobileMenu()" class="text-left hover:text-[#1A1A1A]">
+            — Крупная мягкая мебель
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==================== ОСНОВНОЙ КОНТЕЙНЕР ЭКРАНОВ ==================== -->
+  <main id="app-root" class="flex-1"></main>
+
+  <!-- ==================== ФУТЕР ==================== -->
+  <footer class="border-t border-[#E5E3DD] bg-[#FAFAF7] mt-24">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-16 lg:py-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+        
+        <!-- Бренд и философия -->
+        <div class="lg:col-span-4 space-y-5">
+          <div class="font-serif-editorial text-3xl tracking-[0.24em] text-[#1A1A1A]">HITE</div>
+          <p class="text-sm text-[#6B6B6B] font-light leading-relaxed max-w-sm">
+            Штучные предметы интерьера и коллекционный дизайн из натуральных эко-материалов. Каждое изделие создается вручную в нашей мастерской в Подмосковье и сопровождается номерным паспортом.
+          </p>
+          <p class="text-xs text-[#82B5D1] tracking-[0.08em] uppercase pt-1">
+            Ограниченные тиражи • Сертификат подлинности
+          </p>
+        </div>
+
+        <!-- Навигация -->
+        <div class="lg:col-span-2 space-y-4">
+          <h4 class="text-xs uppercase tracking-[0.14em] text-[#1A1A1A] font-medium">Коллекция</h4>
+          <ul class="space-y-3 text-sm text-[#6B6B6B] font-light">
+            <li>
+              <button onclick="navigateTo('catalog', { resetFilters: true })" class="hover:text-[#82B5D1] transition-colors">
+                Все объекты
+              </button>
+            </li>
+            <li>
+              <button onclick="filterByCategory('Светильники')" class="hover:text-[#82B5D1] transition-colors">
+                Светильники
+              </button>
+            </li>
+            <li>
+              <button onclick="filterByCategory('Мелкая мебель')" class="hover:text-[#82B5D1] transition-colors">
+                Мелкая мебель
+              </button>
+            </li>
+            <li>
+              <button onclick="filterByCategory('Крупная мягкая мебель')" class="hover:text-[#82B5D1] transition-colors">
+                Крупная мягкая мебель
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- О доме HITE -->
+        <div class="lg:col-span-3 space-y-4">
+          <h4 class="text-xs uppercase tracking-[0.14em] text-[#1A1A1A] font-medium">Мастерская</h4>
+          <ul class="space-y-3 text-sm text-[#6B6B6B] font-light">
+            <li>
+              <button onclick="navigateTo('workshop')" class="hover:text-[#82B5D1] transition-colors">
+                Философия и материалы
+              </button>
+            </li>
+            <li>
+              <button onclick="navigateTo('favorites')" class="hover:text-[#82B5D1] transition-colors">
+                Избранные предметы
+              </button>
+            </li>
+            <li>
+              <button onclick="navigateTo('cart')" class="hover:text-[#82B5D1] transition-colors">
+                Корзина и резервирование
+              </button>
+            </li>
+            <li>
+              <span class="text-[#6B6B6B]">Индивидуальные заказы для архитекторов</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Контакты шоурума -->
+        <div class="lg:col-span-3 space-y-4">
+          <h4 class="text-xs uppercase tracking-[0.14em] text-[#1A1A1A] font-medium">Шоурум и ателье</h4>
+          <div class="space-y-2.5 text-sm text-[#6B6B6B] font-light leading-relaxed">
+            <p>Московская область, Одинцовский округ, д. Жуковка, Арт-резиденция HITE</p>
+            <p class="text-[#1A1A1A]">+7 (495) 128-94-10</p>
+            <p>atelier@hite-objects.ru</p>
+            <p class="text-xs text-[#6B6B6B] pt-1">Прием коллекционеров по предварительной записи</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-16 pt-8 border-t border-[#E5E3DD] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B6B6B] font-light">
+        <p>© 2026 HITE Atelier. Все права защищены. Штучное производство, Россия.</p>
+        <div class="flex items-center gap-6">
+          <span class="hover:text-[#82B5D1] cursor-pointer transition-colors">Политика конфиденциальности</span>
+          <span class="hover:text-[#82B5D1] cursor-pointer transition-colors">Условия приобретения</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== МОДАЛЬНОЕ ОКНО ЖИВОГО ПОИСКА ==================== -->
+  <div
+    id="search-modal"
+    class="hidden fixed inset-0 z-50 bg-[#1A1A1A]/35 backdrop-blur-sm flex items-start justify-center pt-16 sm:pt-24 px-4"
+    onclick="if(event.target === this) closeSearchModal()"
+  >
+    <div class="bg-[#FAFAF7] border border-[#E5E3DD] w-full max-w-2xl p-6 sm:p-10 shadow-2xl view-animate">
+      <div class="flex items-center justify-between border-b border-[#1A1A1A] pb-3">
+        <div class="flex items-center gap-3 flex-1">
+          <svg class="w-5 h-5 text-[#82B5D1]" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7.5" />
+            <path stroke-linecap="round" d="M20 20l-3.8-3.8" />
+          </svg>
+          <input
+            id="search-input"
+            type="text"
+            oninput="handleLiveSearch(this.value)"
+            placeholder="Поиск по названию, категории или материалу (травертин, дуб, букле...)"
+            class="w-full bg-transparent text-base sm:text-lg font-light text-[#1A1A1A] placeholder-[#6B6B6B]/70 focus:outline-none"
+          />
+        </div>
+        <button
+          onclick="closeSearchModal()"
+          class="text-xs uppercase tracking-[0.14em] text-[#6B6B6B] hover:text-[#1A1A1A] ml-4"
+        >
+          Закрыть
+        </button>
+      </div>
+
+      <div id="search-results" class="mt-6 max-h-[60vh] overflow-y-auto divide-y divide-[#E5E3DD]">
+        <!-- Динамические результаты поиска -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ГАЛЕРЕЙНОЕ УВЕДОМЛЕНИЕ (TOAST) ==================== -->
+  <div
+    id="toast-container"
+    class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none max-w-sm w-[calc(100%-3rem)]"
+  ></div>
+
+  <!-- ==================== JAVASCRIPT ЛОГИКА И ДАННЫЕ ==================== -->
+  <script>
+    // -------------------------------------------------------------------------
+    // 1. КАТАЛОГ ТОВАРОВ (10 уникальных коллекционных объектов HITE)
+    // -------------------------------------------------------------------------
+    const PRODUCTS = [
+      {
+        id: 'oka-floor-lamp',
+        name: 'Торшер «Ока»',
+        category: 'Светильники',
+        price: 118000,
+        materials: ['Дикая глина', 'Небеленый лен', 'Переработанная бронза'],
+        edition: 'Экземпляр №3/10',
+        maxAvailable: 2,
+        rating: 4.9,
+        isPopular: true,
+        isBest: false,
+        isWeeklySpecial: false,
+        dimensions: 'В 168 см × Ø 46 см',
+        weight: '14,5 кг',
+        finish: 'Матовый обжиг без глазури, ручное ткачество',
+        image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Скульптурный торшер «Ока» вдохновлен речными отмелями и туманами средней полосы. Основание вылеплено вручную из шамотной дикой глины в нашей мастерской в Подмосковье и обожжено при температуре 1180 °C, благодаря чему на поверхности сохраняется живой рельеф пальцев мастера. Абажур из плотного небеленого льна мягко рассеивает теплый свет, превращая вечернюю комнату в тихое созерцательное пространство.',
+        reviews: [
+          {
+            author: 'Елена Верещагина, архитектор',
+            date: '14 октября 2026',
+            rating: 5,
+            text: 'Поставили экземпляр №2 в гостиной загородного дома в Барвихе. Фактура глины вживую завораживает — в вечернем свете она выглядит как музейная керамика.'
+          },
+          {
+            author: 'Андрей К.',
+            date: '29 сентября 2026',
+            rating: 5,
+            text: 'Безупречная тактильность. Упаковка и доставка от мастерской были организованы на уровне арт-галереи.'
+          }
+        ]
+      },
+      {
+        id: 'mokh-armchair',
+        name: 'Кресло «Мох»',
+        category: 'Крупная мягкая мебель',
+        price: 265000,
+        materials: ['Букле', 'Массив дуба'],
+        edition: 'Экземпляр №2/8',
+        maxAvailable: 1,
+        rating: 5.0,
+        isPopular: true,
+        isBest: true,
+        isWeeklySpecial: false,
+        dimensions: 'Ш 88 см × Г 92 см × В 74 см',
+        weight: '34 кг',
+        finish: 'Выбеленный дуб под натуральным маслом, шерстяное букле',
+        image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Низкое обволакивающее кресло «Мох» создано для долгих бесед и чтения в тишине. Каркас выполнен из выдержанного массива подмосковного дуба с открытыми столярными соединениями, а обивка соткана из неокрашенной овечьей шерсти сложного молочно-пепельного оттенка. Органический силуэт лишен острых углов и естественно вписывается в архитектурный интерьер.',
+        reviews: [
+          {
+            author: 'Мария Соколова',
+            date: '02 ноября 2026',
+            rating: 5,
+            text: 'Невероятно глубокая, спокойная посадка. Букле очень плотное и благородное, не похоже на стандартные мебельные ткани.'
+          }
+        ]
+      },
+      {
+        id: 'valun-coffee-table',
+        name: 'Журнальный столик «Валун»',
+        category: 'Мелкая мебель',
+        price: 184000,
+        materials: ['Травертин', 'Массив дуба'],
+        edition: 'Экземпляр №5/12',
+        maxAvailable: 2,
+        rating: 4.9,
+        isPopular: true,
+        isBest: false,
+        isWeeklySpecial: true,
+        dimensions: 'Д 125 см × Ш 78 см × В 36 см',
+        weight: '58 кг',
+        finish: 'Незаполненный брашированный травертин, вощение',
+        image: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Асимметричный низкий столик «Валун» высечен из цельной плиты пористого травертина с сохранением природных каверн и неровной кромки, обработанной вручную. Монолитная столешница покоится на трех опорах из мореного дуба, создавая ощущение равновесия между тяжестью камня и легкостью воздуха под ним. Рисунок прожилок каждого экземпляра неповторим.',
+        reviews: [
+          {
+            author: 'Дмитрий Орлов, куратор',
+            date: '19 октября 2026',
+            rating: 5,
+            text: 'Главный центр притяжения в гостиной. Природные поры камня не затерты смолой — он дышит и ощущается настоящим.'
+          },
+          {
+            author: 'Ксения Л.',
+            date: '05 сентября 2026',
+            rating: 5,
+            text: 'Очень основательная вещь с характером. Номерной паспорт с подписью мастера — отдельное удовольствие.'
+          }
+        ]
+      },
+      {
+        id: 'tuman-pendant',
+        name: 'Подвесной светильник «Туман»',
+        category: 'Светильники',
+        price: 94000,
+        materials: ['Небеленый лен', 'Переработанная бронза'],
+        edition: 'Экземпляр №7/15',
+        maxAvailable: 3,
+        rating: 4.8,
+        isPopular: true,
+        isBest: false,
+        isWeeklySpecial: false,
+        dimensions: 'Ø 72 см × В 34 см (подвес до 180 см)',
+        weight: '4,2 кг',
+        finish: 'Патинированная переработанная бронза, ручная драпировка',
+        image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Парящий купол светильника «Туман» натянут вручную на тонкий обруч из переработанной бронзы. Полупрозрачный вологодский лен пропускает мягкий, лишенный бликов свет, напоминающий утреннюю дымку над водой. Идеален над обеденным столом из натурального дерева или в спальне.',
+        reviews: [
+          {
+            author: 'Ольга Романова',
+            date: '22 октября 2026',
+            rating: 5,
+            text: 'Свет настолько мягкий и обволакивающий, что вечером не хочется включать никакой другой.'
+          }
+        ]
+      },
+      {
+        id: 'dyuna-sofa',
+        name: 'Диван «Дюна»',
+        category: 'Крупная мягкая мебель',
+        price: 460000,
+        materials: ['Букле', 'Массив дуба', 'Небеленый лен'],
+        edition: 'Экземпляр №1/5',
+        maxAvailable: 1,
+        rating: 5.0,
+        isPopular: false,
+        isBest: true,
+        isWeeklySpecial: false,
+        dimensions: 'Д 248 см × Г 104 см × В 72 см',
+        weight: '86 кг',
+        finish: 'Натуральный латекс, конский волос, бельгийско-русское букле',
+        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Флагманский объект коллекции HITE. Диван «Дюна» выпущен сверхмалым тиражом всего в 5 экземпляров. Внутри него полностью исключены синтетические пены: в качестве наполнителя используются слои натурального латекса, кокосовой койры и промытого конского волоса, обернутые в небеленый лен. Плавная линия спинки повторяет очертания песчаных холмов.',
+        reviews: [
+          {
+            author: 'Виктор Захаров',
+            date: '10 ноября 2026',
+            rating: 5,
+            text: 'Первый экземпляр коллекции — настоящее произведение современного русского предметного дизайна.'
+          }
+        ]
+      },
+      {
+        id: 'kora-stool',
+        name: 'Табурет-скульптура «Кора»',
+        category: 'Мелкая мебель',
+        price: 76000,
+        materials: ['Массив дуба'],
+        edition: 'Экземпляр №4/14',
+        maxAvailable: 3,
+        rating: 4.9,
+        isPopular: false,
+        isBest: true,
+        isWeeklySpecial: false,
+        dimensions: 'Ш 42 см × Г 36 см × В 45 см',
+        weight: '19 кг',
+        finish: 'Ручная теска стамеской, обжиг и льняное масло',
+        image: 'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Вырубленный из цельного кряжа сухостойного дуба табурет-скульптура «Кора» может служить прикроватной тумбой, подставкой для арт-объектов или дополнительным местом для сидения. Каждая грань обработана стамеской вручную, сохраняя естественные трещины выдержки дерева.',
+        reviews: [
+          {
+            author: 'Анна Белова, дизайнер интерьеров',
+            date: '27 сентября 2026',
+            rating: 5,
+            text: 'Беру уже второй табурет «Кора» в проекты. Он моментально добавляет стерильному минимализму глубину и живую историю.'
+          }
+        ]
+      },
+      {
+        id: 'rosa-table-lamp',
+        name: 'Настольная лампа «Роса»',
+        category: 'Светильники',
+        price: 68000,
+        materials: ['Дикая глина', 'Переработанная бронза'],
+        edition: 'Экземпляр №6/12',
+        maxAvailable: 2,
+        rating: 4.8,
+        isPopular: false,
+        isBest: true,
+        isWeeklySpecial: false,
+        dimensions: 'В 41 см × Ø 28 см',
+        weight: '5,1 кг',
+        finish: 'Терракотовая шамотная глина, матовая бронза',
+        image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Камерная настольная лампа «Роса» сочетает тяжелое керамическое основание в форме капли и плавно изогнутый отражатель из патинированной бронзы. Свет направлен вниз, создавая уютное световое пятно на консоли или рабочем столе.',
+        reviews: [
+          {
+            author: 'Игорь П.',
+            date: '11 октября 2026',
+            rating: 5,
+            text: 'Идеальные пропорции. В выключенном состоянии смотрится как самостоятельная скульптура.'
+          }
+        ]
+      },
+      {
+        id: 'gorizont-console',
+        name: 'Консоль «Горизонт»',
+        category: 'Мелкая мебель',
+        price: 215000,
+        materials: ['Массив дуба', 'Травертин'],
+        edition: 'Экземпляр №2/7',
+        maxAvailable: 1,
+        rating: 5.0,
+        isPopular: false,
+        isBest: false,
+        isWeeklySpecial: false,
+        dimensions: 'Д 160 см × Г 38 см × В 82 см',
+        weight: '44 кг',
+        finish: 'Брашированный дуб, вставка из светлого травертина',
+        image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Архитектурная консоль «Горизонт» построена на контрасте тонкой вытянутой столешницы из массива дуба и монументальной опоры из пиленого травертина. Создана для входных групп, галерейных пространств и гостиных.',
+        reviews: [
+          {
+            author: 'Наталья К.',
+            date: '03 октября 2026',
+            rating: 5,
+            text: 'Строгая геометрия и потрясающее качество подгонки камня к дереву.'
+          }
+        ]
+      },
+      {
+        id: 'tishina-bench',
+        name: 'Банкетка «Тишина»',
+        category: 'Крупная мягкая мебель',
+        price: 152000,
+        materials: ['Ротанг', 'Массив дуба', 'Небеленый лен'],
+        edition: 'Экземпляр №3/9',
+        maxAvailable: 2,
+        rating: 4.9,
+        isPopular: false,
+        isBest: false,
+        isWeeklySpecial: false,
+        dimensions: 'Д 145 см × Г 48 см × В 44 см',
+        weight: '18 кг',
+        finish: 'Ручное плетение из натурального ротанга, съемный матрас из льна',
+        image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Легкая и воздушная банкетка «Тишина» сплетена вручную из неочищенного ротанга поверх каркаса из дуба и дополнена тонким матрасом из небеленого льна с наполнителем из овечьей шерсти. Органично дополняет изножье кровати или панорамное окно.',
+        reviews: []
+      },
+      {
+        id: 'lunny-kamen-sconce',
+        name: 'Бра «Лунный камень»',
+        category: 'Светильники',
+        price: 54000,
+        materials: ['Травертин', 'Переработанная бронза'],
+        edition: 'Экземпляр №8/16',
+        maxAvailable: 4,
+        rating: 4.8,
+        isPopular: false,
+        isBest: false,
+        isWeeklySpecial: false,
+        dimensions: 'Ø 26 см × Г 9 см',
+        weight: '3,8 кг',
+        finish: 'Тонкий срез полупрозрачного травертина, бронзовый крепеж',
+        image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1200&q=85',
+        gallery: [
+          'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1200&q=85',
+          'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85'
+        ],
+        description:
+          'Настенный светильник «Лунный камень» представляет собой тончайший диск отполированного вручную травертина. При включении теплый свет просвечивает сквозь слоистую структуру минерала, проявляя его скрытый золотисто-кремовый рисунок.',
+        reviews: [
+          {
+            author: 'Сергей Мельников',
+            date: '18 сентября 2026',
+            rating: 5,
+            text: 'Заказали пару для спальни. Когда свет включен, камень светится изнутри как настоящий лунный диск.'
+          }
+        ]
+      }
+    ];
+
+    const ALL_MATERIALS = [
+      'Массив дуба',
+      'Травертин',
+      'Букле',
+      'Небеленый лен',
+      'Переработанная бронза',
+      'Дикая глина',
+      'Ротанг'
+    ];
+
+    // -------------------------------------------------------------------------
+    // 2. СОСТОЯНИЕ ПРИЛОЖЕНИЯ (STATE)
+    // -------------------------------------------------------------------------
+    const state = {
+      view: 'home', // 'home' | 'catalog' | 'product' | 'favorites' | 'cart' | 'checkout' | 'orderSuccess' | 'workshop'
+      selectedProductId: PRODUCTS[0].id,
+      selectedGalleryIndex: 0,
+      cart: [
+        // Предзаполним 1 культовый предмет для удобства демонстрации (пользователь может изменить или удалить)
+      ],
+      favorites: ['valun-coffee-table', 'mokh-armchair'],
+      catalog: {
+        category: 'Все',
+        materials: [],
+        priceMin: '',
+        priceMax: '',
+        sort: 'popular', // 'popular' | 'price-asc' | 'price-desc'
+        viewMode: 'grid', // 'grid' | 'list'
+        visibleCount: 6,
+        mobileFiltersOpen: false
+      },
+      lastOrder: null,
+      newsletterSubscribed: false
+    };
+
+    // -------------------------------------------------------------------------
+    // 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // -------------------------------------------------------------------------
+    function formatPrice(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+    }
+
+    function getProductById(id) {
+      return PRODUCTS.find((p) => p.id === id);
+    }
+
+    function getCartCount() {
+      return state.cart.reduce((sum, item) => sum + item.qty, 0);
+    }
+
+    function getCartSubtotal() {
+      return state.cart.reduce((sum, item) => {
+        const product = getProductById(item.id);
+        return sum + (product ? product.price * item.qty : 0);
+      }, 0);
+    }
+
+    function isInCart(productId) {
+      return state.cart.some((item) => item.id === productId);
+    }
+
+    function isFavorite(productId) {
+      return state.favorites.includes(productId);
+    }
+
+    function updateHeaderBadges() {
+      const favBadge = document.getElementById('fav-badge');
+      const cartBadge = document.getElementById('cart-badge');
+
+      const favCount = state.favorites.length;
+      const cartCount = getCartCount();
+
+      favBadge.textContent = favCount;
+      cartBadge.textContent = cartCount;
+
+      if (favCount > 0) {
+        favBadge.classList.add('bg-[#82B5D1]/25', 'text-[#1A1A1A]');
+      } else {
+        favBadge.classList.remove('bg-[#82B5D1]/25');
+      }
+
+      if (cartCount > 0) {
+        cartBadge.classList.add('bg-[#1A1A1A]', 'text-white');
+        cartBadge.classList.remove('bg-[#F2F0EB]', 'text-[#1A1A1A]');
+      } else {
+        cartBadge.classList.remove('bg-[#1A1A1A]', 'text-white');
+        cartBadge.classList.add('bg-[#F2F0EB]', 'text-[#1A1A1A]');
+      }
+
+      // Активная ссылка в шапке
+      document.querySelectorAll('.nav-link').forEach((btn) => {
+        const target = btn.getAttribute('data-nav');
+        if (target === state.view || (target === 'catalog' && state.view === 'product')) {
+          btn.classList.add('text-[#82B5D1]');
+        } else {
+          btn.classList.remove('text-[#82B5D1]');
+        }
+      });
+    }
+
+    function showToast(title, subtitle = '') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className =
+        'pointer-events-auto bg-[#1A1A1A] text-[#FAFAF7] border border-[#333333] px-5 py-4 shadow-xl transition-all duration-300 transform translate-y-2 opacity-0';
+      toast.innerHTML = `
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-[0.12em] text-[#82B5D1] mb-1">HITE Atelier</p>
+            <p class="text-sm font-light">${title}</p>
+            ${subtitle ? `<p class="text-xs text-[#A3A3A3] mt-1 font-light">${subtitle}</p>` : ''}
+          </div>
+          <button onclick="this.parentElement.parentElement.remove()" class="text-xs text-[#A3A3A3] hover:text-white">✕</button>
+        </div>
+      `;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3400);
+    }
+
+    // -------------------------------------------------------------------------
+    // 4. ДЕЙСТВИЯ ПОЛЬЗОВАТЕЛЯ (КОРЗИНА, ИЗБРАННОЕ, НАВИГАЦИЯ)
+    // -------------------------------------------------------------------------
+    function navigateTo(view, options = {}) {
+      state.view = view;
+      if (options.productId) {
+        state.selectedProductId = options.productId;
+        state.selectedGalleryIndex = 0;
+      }
+      if (options.resetFilters) {
+        state.catalog.category = 'Все';
+        state.catalog.materials = [];
+        state.catalog.priceMin = '';
+        state.catalog.priceMax = '';
+        state.catalog.visibleCount = 6;
+      }
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filterByCategory(category) {
+      state.catalog.category = category;
+      state.catalog.visibleCount = 6;
+      navigateTo('catalog');
+    }
+
+    function toggleFavorite(productId, event) {
+      if (event) event.stopPropagation();
+      const product = getProductById(productId);
+      if (!product) return;
+
+      const idx = state.favorites.indexOf(productId);
+      if (idx === -1) {
+        state.favorites.push(productId);
+        showToast(`«${product.name}» добавлен в избранное`, product.edition);
+      } else {
+        state.favorites.splice(idx, 1);
+        showToast(`«${product.name}» удален из избранного`);
+      }
+      render();
+    }
+
+    function addToCart(productId, event, goToCheckout = false) {
+      if (event) event.stopPropagation();
+      const product = getProductById(productId);
+      if (!product) return;
+
+      const existing = state.cart.find((item) => item.id === productId);
+      if (existing) {
+        if (existing.qty < product.maxAvailable) {
+          existing.qty += 1;
+          showToast(`Количество увеличено: «${product.name}»`, `В резерве: ${existing.qty} из ${product.maxAvailable} доступных`);
+        } else {
+          showToast(
+            `Достигнут лимит тиража для «${product.name}»`,
+            `Доступно всего ${product.maxAvailable} экз. в мастерской`
+          );
+        }
+      } else {
+        state.cart.push({ id: productId, qty: 1 });
+        showToast(`«${product.name}» зарезервирован в корзине`, `${product.edition} • ${formatPrice(product.price)}`);
+      }
+
+      if (goToCheckout) {
+        navigateTo('checkout');
+      } else {
+        render();
+      }
+    }
+
+    function updateCartQty(productId, delta) {
+      const product = getProductById(productId);
+      const itemIndex = state.cart.findIndex((i) => i.id === productId);
+      if (itemIndex === -1 || !product) return;
+
+      const newQty = state.cart[itemIndex].qty + delta;
+      if (newQty <= 0) {
+        state.cart.splice(itemIndex, 1);
+        showToast(`«${product.name}» удален из корзины`);
+      } else if (newQty > product.maxAvailable) {
+        showToast(`Штучный тираж: доступно не более ${product.maxAvailable} экз.`);
+      } else {
+        state.cart[itemIndex].qty = newQty;
+      }
+      render();
+    }
+
+    function removeFromCart(productId) {
+      const product = getProductById(productId);
+      state.cart = state.cart.filter((i) => i.id !== productId);
+      if (product) showToast(`«${product.name}» удален из корзины`);
+      render();
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. ЖИВОЙ ПОИСК
+    // -------------------------------------------------------------------------
+    function openSearchModal() {
+      const modal = document.getElementById('search-modal');
+      modal.classList.remove('hidden');
+      const input = document.getElementById('search-input');
+      input.value = '';
+      handleLiveSearch('');
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function closeSearchModal() {
+      document.getElementById('search-modal').classList.add('hidden');
+    }
+
+    function handleLiveSearch(query) {
+      const q = query.trim().toLowerCase();
+      const resultsEl = document.getElementById('search-results');
+
+      const matches = q
+        ? PRODUCTS.filter(
+            (p) =>
+              p.name.toLowerCase().includes(q) ||
+              p.category.toLowerCase().includes(q) ||
+              p.materials.some((m) => m.toLowerCase().includes(q)) ||
+              p.edition.toLowerCase().includes(q)
+          )
+        : PRODUCTS.slice(0, 4);
+
+      if (matches.length === 0) {
+        resultsEl.innerHTML = `
+          <div class="py-10 text-center text-sm text-[#6B6B6B] font-light">
+            По запросу «${query}» предметов в текущей коллекции не найдено.
+          </div>
+        `;
+        return;
+      }
+
+      resultsEl.innerHTML = `
+        <p class="text-[11px] uppercase tracking-[0.14em] text-[#6B6B6B] pb-3">
+          ${q ? `Найдено объектов: ${matches.length}` : 'Рекомендуемые объекты коллекции'}
+        </p>
+        ${matches
+          .map(
+            (p) => `
+          <div
+            onclick="closeSearchModal(); navigateTo('product', { productId: '${p.id}' })"
+            class="py-3.5 flex items-center justify-between gap-4 cursor-pointer group hover:bg-[#F2F0EB]/60 px-2 transition-colors"
+          >
+            <div class="flex items-center gap-4">
+              <img src="${p.image}" alt="${p.name}" class="w-14 h-16 object-cover bg-[#F2F0EB]" />
+              <div>
+                <p class="font-serif-editorial text-xl text-[#1A1A1A] group-hover:text-[#82B5D1] transition-colors">${p.name}</p>
+                <p class="text-xs text-[#6B6B6B] font-light">${p.edition} • ${p.materials.join(', ')}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-normal text-[#1A1A1A]">${formatPrice(p.price)}</p>
+              <span class="text-[11px] text-[#82B5D1] uppercase tracking-wider">Смотреть →</span>
+            </div>
+          </div>
+        `
+          )
+          .join('')}
+      `;
+    }
+
+    // Закрытие поиска по Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeSearchModal();
+    });
+
+    // -------------------------------------------------------------------------
+    // 6. ПЕРЕИСПОЛЬЗУЕМЫЙ КОМПОНЕНТ КАРТОЧКИ ТОВАРА
+    // -------------------------------------------------------------------------
+    function renderProductCard(product, mode = 'grid') {
+      const fav = isFavorite(product.id);
+      const inCart = isInCart(product.id);
+
+      if (mode === 'list') {
+        return `
+          <article
+            onclick="navigateTo('product', { productId: '${product.id}' })"
+            class="group border border-[#E5E3DD] bg-[#FAFAF7] hover:border-[#82B5D1]/70 transition-colors p-4 sm:p-6 flex flex-col sm:flex-row gap-6 sm:gap-8 cursor-pointer"
+          >
+            <div class="gallery-img-wrap w-full sm:w-56 md:w-64 aspect-[4/5] sm:aspect-square flex-shrink-0 relative">
+              <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+
+            <div class="flex-1 flex flex-col justify-between py-1">
+              <div>
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <p class="text-[11px] uppercase tracking-[0.14em] text-[#6B6B6B] mb-1.5">
+                      ${product.category} • <span class="text-[#82B5D1]">${product.edition}</span>
+                    </p>
+                    <h3 class="font-serif-editorial text-2xl sm:text-3xl font-normal text-[#1A1A1A] group-hover:text-[#82B5D1] transition-colors">
+                      ${product.name}
+                    </h3>
+                  </div>
+
+                  <button
+                    onclick="toggleFavorite('${product.id}', event)"
+                    aria-label="Добавить в избранное"
+                    class="p-2 -mr-2 -mt-1 transition-colors ${fav ? 'text-[#82B5D1]' : 'text-[#6B6B6B] hover:text-[#82B5D1]'}"
+                  >
+                    <svg class="w-5 h-5" fill="${fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                  </button>
+                </div>
+
+                <p class="text-sm text-[#6B6B6B] font-light leading-relaxed mt-3 line-clamp-2 max-w-2xl">
+                  ${product.description}
+                </p>
+
+                <div class="flex flex-wrap gap-2 mt-4">
+                  ${product.materials
+                    .map(
+                      (m) =>
+                        `<span class="text-[11px] px-2.5 py-1 border border-[#E5E3DD] text-[#6B6B6B] font-light">${m}</span>`
+                    )
+                    .join('')}
+                </div>
+              </div>
+
+              <div class="pt-6 mt-6 border-t border-[#E5E3DD] flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <span class="text-xs text-[#6B6B6B] block font-light">Стоимость экземпляра</span>
+                  <span class="text-lg font-normal tracking-wide text-[#1A1A1A]">${formatPrice(product.price)}</span>
+                </div>
+
+                <button
+                  onclick="addToCart('${product.id}', event)"
+                  class="px-6 py-3 text-xs uppercase tracking-[0.14em] transition-colors ${
+                    inCart
+                      ? 'bg-[#82B5D1] text-white'
+                      : 'bg-[#1A1A1A] text-white hover:bg-[#82B5D1]'
+                  }"
+                >
+                  ${inCart ? 'В корзине ✓' : 'В корзину'}
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      // Стандартный вид — Плитка (галерейная карточка)
+      return `
+        <article
+          onclick="navigateTo('product', { productId: '${product.id}' })"
+          class="group flex flex-col cursor-pointer"
+        >
+          <div class="gallery-img-wrap relative aspect-[4/5] border border-[#E5E3DD]/70">
+            <img
+              src="${product.image}"
+              alt="${product.name}"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+
+            <!-- Кнопка Избранного в правом верхнем углу -->
+            <button
+              onclick="toggleFavorite('${product.id}', event)"
+              aria-label="Добавить в избранное"
+              class="absolute top-3.5 right-3.5 w-9 h-9 bg-[#FAFAF7]/90 backdrop-blur-sm border border-[#E5E3DD] flex items-center justify-center transition-colors ${
+                fav ? 'text-[#82B5D1] border-[#82B5D1]' : 'text-[#1A1A1A] hover:text-[#82B5D1]'
+              }"
+            >
+              <svg class="w-4 h-4" fill="${fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="pt-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 text-[11px] tracking-[0.12em] uppercase text-[#6B6B6B] mb-1">
+                <span>${product.edition}</span>
+                <span class="text-[#82B5D1]">★ ${product.rating.toFixed(1)}</span>
+              </div>
+              <h3 class="font-serif-editorial text-2xl font-normal text-[#1A1A1A] group-hover:text-[#82B5D1] transition-colors leading-snug">
+                ${product.name}
+              </h3>
+              <p class="text-xs text-[#6B6B6B] font-light mt-1 truncate">
+                ${product.materials.join(' · ')}
+              </p>
+            </div>
+
+            <div class="pt-4 mt-4 border-t border-[#E5E3DD] flex items-center justify-between gap-3">
+              <span class="text-[15px] font-normal text-[#1A1A1A] tracking-wide">
+                ${formatPrice(product.price)}
+              </span>
+
+              <button
+                onclick="addToCart('${product.id}', event)"
+                class="px-4 py-2 text-[11px] uppercase tracking-[0.13em] transition-colors ${
+                  inCart
+                    ? 'bg-[#82B5D1] text-white'
+                    : 'bg-[#1A1A1A] text-white hover:bg-[#82B5D1]'
+                }"
+              >
+                ${inCart ? 'В корзине' : 'В корзину'}
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // 7. ЭКРАН 1: ГЛАВНАЯ СТРАНИЦА
+    // -------------------------------------------------------------------------
+    function renderHomeView() {
+      const popularProducts = PRODUCTS.filter((p) => p.isPopular).slice(0, 4);
+      const bestProducts = PRODUCTS.filter((p) => p.isBest).slice(0, 4);
+      const weeklySpecial = PRODUCTS.find((p) => p.isWeeklySpecial) || PRODUCTS[2];
+
+      const categories = [
+        {
+          title: 'Светильники',
+          subtitle: 'Дикая глина, лен и переработанная бронза',
+          count: PRODUCTS.filter((p) => p.category === 'Светильники').length,
+          image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1000&q=85'
+        },
+        {
+          title: 'Мелкая мебель',
+          subtitle: 'Скульптурные столики, консоли и табуреты',
+          count: PRODUCTS.filter((p) => p.category === 'Мелкая мебель').length,
+          image: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&w=1000&q=85'
+        },
+        {
+          title: 'Крупная мягкая мебель',
+          subtitle: 'Неокрашенное букле, дуб и природные наполнители',
+          count: PRODUCTS.filter((p) => p.category === 'Крупная мягкая мебель').length,
+          image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=1000&q=85'
+        }
+      ];
+
+      return `
+        <div class="view-animate">
+          <!-- HERO БАННЕР -->
+          <section class="border-b border-[#E5E3DD]">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-16 lg:py-24">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                
+                <!-- Левая текстовая композиция -->
+                <div class="lg:col-span-6 space-y-7 lg:pr-8">
+                  <div class="inline-flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-[#6B6B6B]">
+                    <span class="w-8 h-[1px] bg-[#82B5D1]"></span>
+                    <span>Мастерская HITE • Подмосковье</span>
+                  </div>
+
+                  <h1 class="font-serif-editorial text-5xl sm:text-6xl lg:text-[68px] font-light leading-[1.06] text-[#1A1A1A] tracking-[-0.01em]">
+                    Вещь, которой <br class="hidden sm:inline" />
+                    <span class="italic font-normal">нет ни у кого</span>
+                  </h1>
+
+                  <p class="text-base sm:text-[17px] text-[#6B6B6B] font-light leading-relaxed max-w-xl">
+                    Штучные предметы интерьера из дикой глины, пористого травертина, массивного дуба и неокрашенного льна. Каждый объект создается вручную тиражом от 5 до 16 экземпляров и имеет собственный порядковый номер.
+                  </p>
+
+                  <div class="pt-2 flex flex-wrap items-center gap-4">
+                    <button
+                      onclick="navigateTo('catalog', { resetFilters: true })"
+                      class="px-8 py-4 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+                    >
+                      Смотреть коллекцию
+                    </button>
+                    <button
+                      onclick="navigateTo('workshop')"
+                      class="px-7 py-4 border border-[#E5E3DD] text-[#1A1A1A] text-xs uppercase tracking-[0.16em] hover:border-[#82B5D1] hover:text-[#82B5D1] transition-colors"
+                    >
+                      О мастерской
+                    </button>
+                  </div>
+
+                  <!-- Галерейные метрики -->
+                  <div class="pt-8 border-t border-[#E5E3DD] grid grid-cols-3 gap-6 max-w-lg">
+                    <div>
+                      <p class="font-serif-editorial text-2xl sm:text-3xl text-[#1A1A1A]">100%</p>
+                      <p class="text-xs text-[#6B6B6B] font-light mt-0.5">Ручная работа</p>
+                    </div>
+                    <div>
+                      <p class="font-serif-editorial text-2xl sm:text-3xl text-[#1A1A1A]">5–16</p>
+                      <p class="text-xs text-[#6B6B6B] font-light mt-0.5">Экземпляров в серии</p>
+                    </div>
+                    <div>
+                      <p class="font-serif-editorial text-2xl sm:text-3xl text-[#1A1A1A]">Эко</p>
+                      <p class="text-xs text-[#6B6B6B] font-light mt-0.5">Чистые материалы</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Правое галерейное изображение -->
+                <div class="lg:col-span-6">
+                  <div
+                    onclick="navigateTo('product', { productId: 'mokh-armchair' })"
+                    class="gallery-img-wrap relative aspect-[4/5] sm:aspect-[5/5] border border-[#E5E3DD] cursor-pointer group"
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=85"
+                      alt="Интерьер с коллекционной мебелью HITE"
+                      class="w-full h-full object-cover"
+                    />
+                    <div class="absolute bottom-5 left-5 right-5 sm:left-8 sm:right-8 bg-[#FAFAF7]/92 backdrop-blur-md border border-[#E5E3DD] p-4 sm:p-5 flex items-center justify-between gap-4">
+                      <div>
+                        <p class="text-[11px] uppercase tracking-[0.14em] text-[#82B5D1]">Экспозиция 2026</p>
+                        <p class="font-serif-editorial text-xl text-[#1A1A1A]">Кресло «Мох» и столик «Валун»</p>
+                      </div>
+                      <span class="text-xs uppercase tracking-[0.14em] text-[#1A1A1A] group-hover:text-[#82B5D1] transition-colors whitespace-nowrap">
+                        Изучить →
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- КАТЕГОРИИ КОЛЛЕКЦИИ -->
+          <section class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-20 lg:py-28">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+              <div>
+                <p class="text-xs uppercase tracking-[0.18em] text-[#82B5D1] mb-2">Разделы галереи</p>
+                <h2 class="font-serif-editorial text-3xl sm:text-5xl font-light text-[#1A1A1A]">
+                  Категории предметов
+                </h2>
+              </div>
+              <button
+                onclick="navigateTo('catalog', { resetFilters: true })"
+                class="text-xs uppercase tracking-[0.14em] text-[#6B6B6B] hover:text-[#82B5D1] transition-colors self-start sm:self-auto"
+              >
+                Перейти ко всем объектам (${PRODUCTS.length}) →
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              ${categories
+                .map(
+                  (cat) => `
+                <div
+                  onclick="filterByCategory('${cat.title}')"
+                  class="group cursor-pointer border border-[#E5E3DD] bg-[#FAFAF7] hover:border-[#82B5D1] transition-colors"
+                >
+                  <div class="gallery-img-wrap aspect-[4/4] border-b border-[#E5E3DD]">
+                    <img src="${cat.image}" alt="${cat.title}" class="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                  <div class="p-6 sm:p-7 flex items-end justify-between gap-4">
+                    <div>
+                      <p class="text-[11px] uppercase tracking-[0.14em] text-[#6B6B6B] mb-1.5">
+                        ${cat.count} ${cat.count === 3 ? 'объекта' : 'объектов'}
+                      </p>
+                      <h3 class="font-serif-editorial text-2xl sm:text-3xl font-normal text-[#1A1A1A] group-hover:text-[#82B5D1] transition-colors">
+                        ${cat.title}
+                      </h3>
+                      <p class="text-xs text-[#6B6B6B] font-light mt-1.5">${cat.subtitle}</p>
+                    </div>
+                    <span class="w-9 h-9 border border-[#E5E3DD] flex items-center justify-center text-[#1A1A1A] group-hover:border-[#82B5D1] group-hover:text-[#82B5D1] transition-colors flex-shrink-0">
+                      →
+                    </span>
+                  </div>
+                </div>
+              `
+                )
+                .join('')}
+            </div>
+          </section>
+
+          <!-- ПОПУЛЯРНЫЕ ТОВАРЫ -->
+          <section class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-24">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4 border-t border-[#E5E3DD] pt-16">
+              <div>
+                <p class="text-xs uppercase tracking-[0.18em] text-[#6B6B6B] mb-2">Выбор архитекторов</p>
+                <h2 class="font-serif-editorial text-3xl sm:text-5xl font-light text-[#1A1A1A]">
+                  Популярные предметы
+                </h2>
+              </div>
+              <button
+                onclick="navigateTo('catalog', { resetFilters: true })"
+                class="text-xs uppercase tracking-[0.14em] text-[#1A1A1A] hover:text-[#82B5D1] transition-colors"
+              >
+                Вся витрина →
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              ${popularProducts.map((p) => renderProductCard(p, 'grid')).join('')}
+            </div>
+          </section>
+
+          <!-- СПЕЦИАЛЬНЫЙ ТОВАР НЕДЕЛИ -->
+          <section class="bg-[#F2F0EB] border-y border-[#E5E3DD] py-20 lg:py-28">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                
+                <div class="lg:col-span-6">
+                  <div
+                    onclick="navigateTo('product', { productId: '${weeklySpecial.id}' })"
+                    class="gallery-img-wrap aspect-[4/4] border border-[#E5E3DD] cursor-pointer group"
+                  >
+                    <img
+                      src="${weeklySpecial.image}"
+                      alt="${weeklySpecial.name}"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                <div class="lg:col-span-6 space-y-6">
+                  <div class="inline-flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-[#82B5D1]">
+                    <span class="w-8 h-[1px] bg-[#82B5D1]"></span>
+                    <span>Объект недели • Особый экземпляр</span>
+                  </div>
+
+                  <h2 class="font-serif-editorial text-4xl sm:text-5xl lg:text-6xl font-light text-[#1A1A1A] leading-tight">
+                    ${weeklySpecial.name}
+                  </h2>
+
+                  <p class="text-xs uppercase tracking-[0.16em] text-[#6B6B6B]">
+                    ${weeklySpecial.edition} • Материалы: ${weeklySpecial.materials.join(', ')}
+                  </p>
+
+                  <p class="text-base text-[#1A1A1A]/85 font-light leading-relaxed max-w-xl">
+                    ${weeklySpecial.description}
+                  </p>
+
+                  <div class="pt-4 border-t border-[#E5E3DD] flex flex-wrap items-baseline justify-between gap-6 max-w-xl">
+                    <div>
+                      <span class="text-xs text-[#6B6B6B] block font-light mb-1">Стоимость предмета</span>
+                      <span class="font-serif-editorial text-3xl sm:text-4xl text-[#1A1A1A]">
+                        ${formatPrice(weeklySpecial.price)}
+                      </span>
+                    </div>
+                    <div class="text-xs text-[#6B6B6B] font-light">
+                      Габариты: <span class="text-[#1A1A1A]">${weeklySpecial.dimensions}</span>
+                    </div>
+                  </div>
+
+                  <div class="pt-3 flex flex-wrap items-center gap-4">
+                    <button
+                      onclick="navigateTo('product', { productId: '${weeklySpecial.id}' })"
+                      class="px-8 py-4 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+                    >
+                      Рассмотреть объект
+                    </button>
+                    <button
+                      onclick="addToCart('${weeklySpecial.id}', event)"
+                      class="px-7 py-4 border border-[#1A1A1A] text-[#1A1A1A] text-xs uppercase tracking-[0.16em] hover:border-[#82B5D1] hover:text-[#82B5D1] transition-colors"
+                    >
+                      ${isInCart(weeklySpecial.id) ? 'Зарезервировано ✓' : 'В корзину'}
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- ЛУЧШИЕ ТОВАРЫ (КОЛЛЕКЦИОННЫЕ ОБЪЕКТЫ) -->
+          <section class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-24">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+              <div>
+                <p class="text-xs uppercase tracking-[0.18em] text-[#82B5D1] mb-2">Кураторская подборка</p>
+                <h2 class="font-serif-editorial text-3xl sm:text-5xl font-light text-[#1A1A1A]">
+                  Лучшие объекты коллекции
+                </h2>
+              </div>
+              <button
+                onclick="navigateTo('catalog', { resetFilters: true })"
+                class="text-xs uppercase tracking-[0.14em] text-[#6B6B6B] hover:text-[#82B5D1] transition-colors"
+              >
+                Открыть полный каталог →
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              ${bestProducts.map((p) => renderProductCard(p, 'grid')).join('')}
+            </div>
+          </section>
+
+          <!-- ФОРМА ПОДПИСКИ НА ЗАКРЫТЫЕ АНОНСЫ -->
+          <section class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+            <div class="border border-[#E5E3DD] bg-[#F2F0EB]/65 px-6 py-16 sm:px-14 sm:py-20 text-center">
+              <div class="max-w-xl mx-auto space-y-5">
+                <p class="text-xs uppercase tracking-[0.2em] text-[#82B5D1]">Закрытый клуб коллекционеров</p>
+                <h2 class="font-serif-editorial text-3xl sm:text-5xl font-light text-[#1A1A1A]">
+                  Анонсы новых штучных тиражей
+                </h2>
+                <p class="text-sm text-[#6B6B6B] font-light leading-relaxed">
+                  Мы выпускаем не более двух новых серий в сезон. Подпишитесь, чтобы получать персональные приглашения на закрытый предпросмотр за 48 часов до публикации в каталоге.
+                </p>
+
+                ${
+                  state.newsletterSubscribed
+                    ? `
+                  <div class="pt-4">
+                    <div class="inline-block border border-[#82B5D1] bg-[#FAFAF7] px-6 py-4 text-sm text-[#1A1A1A] font-light">
+                      Благодарим. Ваш адрес внесен в реестр закрытых показов мастерской HITE.
+                    </div>
+                  </div>
+                `
+                    : `
+                  <form onsubmit="handleNewsletterSubmit(event)" class="pt-4 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <input
+                      id="newsletter-email"
+                      type="email"
+                      required
+                      placeholder="Ваш e-mail"
+                      class="flex-1 bg-[#FAFAF7] border border-[#E5E3DD] px-4 py-3.5 text-sm font-light text-[#1A1A1A] placeholder-[#6B6B6B] focus:outline-none focus:border-[#82B5D1]"
+                    />
+                    <button
+                      type="submit"
+                      class="px-7 py-3.5 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.15em] hover:bg-[#82B5D1] transition-colors whitespace-nowrap"
+                    >
+                      Подписаться
+                    </button>
+                  </form>
+                `
+                }
+              </div>
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function handleNewsletterSubmit(e) {
+      e.preventDefault();
+      state.newsletterSubscribed = true;
+      showToast('Вы подписаны на закрытые анонсы HITE', 'Письма отправляются не чаще одного раза в месяц');
+      render();
+    }
+
+    // -------------------------------------------------------------------------
+    // 8. ЭКРАН 2: КАТАЛОГ С ФИЛЬТРАМИ, СОРТИРОВКОЙ И ПЕРЕКЛЮЧЕНИЕМ ВИДА
+    // -------------------------------------------------------------------------
+    function getFilteredProducts() {
+      let list = [...PRODUCTS];
+
+      // Фильтр по категории
+      if (state.catalog.category !== 'Все') {
+        list = list.filter((p) => p.category === state.catalog.category);
+      }
+
+      // Фильтр по материалам (совпадение хотя бы с одним выбранным)
+      if (state.catalog.materials.length > 0) {
+        list = list.filter((p) =>
+          state.catalog.materials.some((selectedMat) => p.materials.includes(selectedMat))
+        );
+      }
+
+      // Фильтр по цене
+      const min = parseFloat(state.catalog.priceMin);
+      const max = parseFloat(state.catalog.priceMax);
+      if (!isNaN(min)) {
+        list = list.filter((p) => p.price >= min);
+      }
+      if (!isNaN(max)) {
+        list = list.filter((p) => p.price <= max);
+      }
+
+      // Сортировка
+      if (state.catalog.sort === 'price-asc') {
+        list.sort((a, b) => a.price - b.price);
+      } else if (state.catalog.sort === 'price-desc') {
+        list.sort((a, b) => b.price - a.price);
+      } else {
+        // По популярности / рейтингу
+        list.sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0) || b.rating - a.rating);
+      }
+
+      return list;
+    }
+
+    function toggleCatalogMaterial(material) {
+      const idx = state.catalog.materials.indexOf(material);
+      if (idx === -1) {
+        state.catalog.materials.push(material);
+      } else {
+        state.catalog.materials.splice(idx, 1);
+      }
+      state.catalog.visibleCount = 6;
+      render();
+    }
+
+    function setCatalogCategory(cat) {
+      state.catalog.category = cat;
+      state.catalog.visibleCount = 6;
+      render();
+    }
+
+    function setCatalogPrice(bound, value) {
+      if (bound === 'min') state.catalog.priceMin = value;
+      if (bound === 'max') state.catalog.priceMax = value;
+      state.catalog.visibleCount = 6;
+      render();
+    }
+
+    function resetCatalogFilters() {
+      state.catalog.category = 'Все';
+      state.catalog.materials = [];
+      state.catalog.priceMin = '';
+      state.catalog.priceMax = '';
+      state.catalog.visibleCount = 6;
+      render();
+    }
+
+    function renderCatalogView() {
+      const filtered = getFilteredProducts();
+      const visibleItems = filtered.slice(0, state.catalog.visibleCount);
+      const hasMore = state.catalog.visibleCount < filtered.length;
+      const categoriesList = ['Все', 'Светильники', 'Мелкая мебель', 'Крупная мягкая мебель'];
+
+      const hasActiveFilters =
+        state.catalog.category !== 'Все' ||
+        state.catalog.materials.length > 0 ||
+        state.catalog.priceMin !== '' ||
+        state.catalog.priceMax !== '';
+
+      return `
+        <div class="view-animate max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
+          
+          <!-- Заголовок каталога -->
+          <div class="border-b border-[#E5E3DD] pb-10 mb-10">
+            <div class="flex items-center gap-2 text-xs text-[#6B6B6B] mb-4">
+              <button onclick="navigateTo('home')" class="hover:text-[#82B5D1]">Главная</button>
+              <span>/</span>
+              <span class="text-[#1A1A1A]">Каталог</span>
+            </div>
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <h1 class="font-serif-editorial text-4xl sm:text-6xl font-light text-[#1A1A1A]">
+                  Коллекция HITE
+                </h1>
+                <p class="text-sm text-[#6B6B6B] font-light mt-2 max-w-2xl">
+                  Все предметы выполнены вручную в единичных или строго лимитированных сериях. Наличие конкретного порядкового номера подтверждается при резервировании.
+                </p>
+              </div>
+              <p class="text-xs uppercase tracking-[0.14em] text-[#6B6B6B]">
+                Показано ${visibleItems.length} из ${filtered.length} объектов
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-10 lg:gap-14">
+            
+            <!-- Кнопка открытия фильтров на мобильном -->
+            <div class="lg:hidden">
+              <button
+                onclick="state.catalog.mobileFiltersOpen = !state.catalog.mobileFiltersOpen; render()"
+                class="w-full py-3.5 px-5 border border-[#E5E3DD] flex items-center justify-between text-xs uppercase tracking-[0.14em] text-[#1A1A1A]"
+              >
+                <span>Фильтры ${hasActiveFilters ? '(активны)' : ''}</span>
+                <span>${state.catalog.mobileFiltersOpen ? 'Скрыть −' : 'Открыть +'}</span>
+              </button>
+            </div>
+
+            <!-- САЙДБАР ФИЛЬТРОВ СЛЕВА -->
+            <aside class="${
+              state.catalog.mobileFiltersOpen ? 'block' : 'hidden'
+            } lg:block w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-9">
+              
+              <!-- Категория -->
+              <div class="border-b border-[#E5E3DD] pb-7">
+                <h3 class="text-xs uppercase tracking-[0.15em] text-[#1A1A1A] font-medium mb-4">
+                  Категория
+                </h3>
+                <ul class="space-y-2.5">
+                  ${categoriesList
+                    .map((cat) => {
+                      const active = state.catalog.category === cat;
+                      return `
+                      <li>
+                        <button
+                          onclick="setCatalogCategory('${cat}')"
+                          class="text-sm font-light transition-colors flex items-center justify-between w-full text-left py-0.5 ${
+                            active ? 'text-[#82B5D1] font-normal' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
+                          }"
+                        >
+                          <span>${cat}</span>
+                          ${active ? '<span class="w-1.5 h-1.5 rounded-full bg-[#82B5D1]"></span>' : ''}
+                        </button>
+                      </li>
+                    `;
+                    })
+                    .join('')}
+                </ul>
+              </div>
+
+              <!-- Материалы -->
+              <div class="border-b border-[#E5E3DD] pb-7">
+                <h3 class="text-xs uppercase tracking-[0.15em] text-[#1A1A1A] font-medium mb-4">
+                  Эко-материалы
+                </h3>
+                <div class="space-y-3">
+                  ${ALL_MATERIALS.map((mat) => {
+                    const checked = state.catalog.materials.includes(mat);
+                    return `
+                      <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          class="hite-checkbox"
+                          ${checked ? 'checked' : ''}
+                          onchange="toggleCatalogMaterial('${mat}')"
+                        />
+                        <span class="text-sm font-light ${
+                          checked ? 'text-[#1A1A1A]' : 'text-[#6B6B6B] group-hover:text-[#1A1A1A]'
+                        } transition-colors">
+                          ${mat}
+                        </span>
+                      </label>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+
+              <!-- Цена -->
+              <div class="border-b border-[#E5E3DD] pb-7">
+                <h3 class="text-xs uppercase tracking-[0.15em] text-[#1A1A1A] font-medium mb-4">
+                  Стоимость, ₽
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-[11px] text-[#6B6B6B] block mb-1">От</label>
+                    <input
+                      type="number"
+                      value="${state.catalog.priceMin}"
+                      onchange="setCatalogPrice('min', this.value)"
+                      placeholder="48 000"
+                      class="w-full bg-transparent border border-[#E5E3DD] px-3 py-2 text-sm font-light text-[#1A1A1A] focus:outline-none focus:border-[#82B5D1]"
+                    />
+                  </div>
+                  <div>
+                    <label class="text-[11px] text-[#6B6B6B] block mb-1">До</label>
+                    <input
+                      type="number"
+                      value="${state.catalog.priceMax}"
+                      onchange="setCatalogPrice('max', this.value)"
+                      placeholder="460 000"
+                      class="w-full bg-transparent border border-[#E5E3DD] px-3 py-2 text-sm font-light text-[#1A1A1A] focus:outline-none focus:border-[#82B5D1]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Сброс фильтров -->
+              ${
+                hasActiveFilters
+                  ? `
+                <button
+                  onclick="resetCatalogFilters()"
+                  class="w-full py-3 border border-[#E5E3DD] text-xs uppercase tracking-[0.14em] text-[#6B6B6B] hover:border-[#82B5D1] hover:text-[#82B5D1] transition-colors"
+                >
+                  Сбросить фильтры
+                </button>
+              `
+                  : ''
+              }
+            </aside>
+
+            <!-- ОСНОВНАЯ ОБЛАСТЬ ТОВАРОВ -->
+            <div class="flex-1">
+              
+              <!-- Панель сортировки и переключения вида -->
+              <div class="flex flex-wrap items-center justify-between gap-4 pb-6 mb-8 border-b border-[#E5E3DD]">
+                <div class="flex items-center gap-3">
+                  <label for="sort-select" class="text-xs uppercase tracking-[0.12em] text-[#6B6B6B]">
+                    Сортировка:
+                  </label>
+                  <select
+                    id="sort-select"
+                    onchange="state.catalog.sort = this.value; render()"
+                    class="bg-transparent text-sm text-[#1A1A1A] font-normal border-b border-[#1A1A1A]/30 pb-1 focus:outline-none focus:border-[#82B5D1] cursor-pointer"
+                  >
+                    <option value="popular" ${state.catalog.sort === 'popular' ? 'selected' : ''}>
+                      По популярности
+                    </option>
+                    <option value="price-asc" ${state.catalog.sort === 'price-asc' ? 'selected' : ''}>
+                      По возрастанию цены
+                    </option>
+                    <option value="price-desc" ${state.catalog.sort === 'price-desc' ? 'selected' : ''}>
+                      По убыванию цены
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Переключатель Плитка / Список -->
+                <div class="flex items-center gap-2">
+                  <span class="text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mr-1 hidden sm:inline">Вид:</span>
+                  <button
+                    onclick="state.catalog.viewMode = 'grid'; render()"
+                    aria-label="Вид плитка"
+                    class="px-3 py-1.5 border text-xs uppercase tracking-[0.1em] transition-colors flex items-center gap-1.5 ${
+                      state.catalog.viewMode === 'grid'
+                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                        : 'border-[#E5E3DD] text-[#6B6B6B] hover:border-[#82B5D1]'
+                    }"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                    </svg>
+                    <span>Плитка</span>
+                  </button>
+                  <button
+                    onclick="state.catalog.viewMode = 'list'; render()"
+                    aria-label="Вид список"
+                    class="px-3 py-1.5 border text-xs uppercase tracking-[0.1em] transition-colors flex items-center gap-1.5 ${
+                      state.catalog.viewMode === 'list'
+                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                        : 'border-[#E5E3DD] text-[#6B6B6B] hover:border-[#82B5D1]'
+                    }"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <span>Список</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Список или сетка карточек -->
+              ${
+                visibleItems.length === 0
+                  ? `
+                <div class="border border-[#E5E3DD] bg-[#F2F0EB]/50 py-20 px-6 text-center space-y-4">
+                  <p class="font-serif-editorial text-3xl text-[#1A1A1A]">Объекты не найдены</p>
+                  <p class="text-sm text-[#6B6B6B] font-light max-w-md mx-auto">
+                    По выбранным параметрам фильтрации в текущей экспозиции нет предметов. Попробуйте изменить сочетание материалов или диапазон стоимости.
+                  </p>
+                  <button
+                    onclick="resetCatalogFilters()"
+                    class="mt-2 px-7 py-3 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.14em] hover:bg-[#82B5D1] transition-colors"
+                  >
+                    Сбросить параметры
+                  </button>
+                </div>
+              `
+                  : state.catalog.viewMode === 'grid'
+                  ? `
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
+                  ${visibleItems.map((p) => renderProductCard(p, 'grid')).join('')}
+                </div>
+              `
+                  : `
+                <div class="space-y-6">
+                  ${visibleItems.map((p) => renderProductCard(p, 'list')).join('')}
+                </div>
+              `
+              }
+
+              <!-- Кнопка «Показать еще» -->
+              ${
+                hasMore
+                  ? `
+                <div class="mt-16 pt-8 border-t border-[#E5E3DD] text-center">
+                  <button
+                    onclick="state.catalog.visibleCount += 4; render()"
+                    class="px-10 py-4 border border-[#1A1A1A] text-[#1A1A1A] text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] hover:border-[#82B5D1] hover:text-white transition-colors"
+                  >
+                    Показать еще (${filtered.length - visibleItems.length})
+                  </button>
+                </div>
+              `
+                  : ''
+              }
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // 9. ЭКРАН 3: СТРАНИЦА ТОВАРА
+    // -------------------------------------------------------------------------
+    function renderProductView() {
+      const product = getProductById(state.selectedProductId) || PRODUCTS[0];
+      const fav = isFavorite(product.id);
+      const inCart = isInCart(product.id);
+      const activeImg = product.gallery[state.selectedGalleryIndex] || product.image;
+
+      // Похожие товары (из той же или смежной категории)
+      const related = PRODUCTS.filter((p) => p.id !== product.id)
+        .sort((a, b) => (a.category === product.category ? -1 : 1))
+        .slice(0, 4);
+
+      return `
+        <div class="view-animate max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-10 lg:py-16">
+          
+          <!-- Хлебные крошки -->
+          <nav class="flex flex-wrap items-center gap-2 text-xs text-[#6B6B6B] mb-10">
+            <button onclick="navigateTo('home')" class="hover:text-[#82B5D1]">Главная</button>
+            <span>/</span>
+            <button onclick="navigateTo('catalog')" class="hover:text-[#82B5D1]">Каталог</button>
+            <span>/</span>
+            <button onclick="filterByCategory('${product.category}')" class="hover:text-[#82B5D1]">
+              ${product.category}
+            </button>
+            <span>/</span>
+            <span class="text-[#1A1A1A]">${product.name}</span>
+          </nav>
+
+          <!-- ДВУХКОЛОНОЧНАЯ ГАЛЕРЕЙНАЯ КОМПОЗИЦИЯ -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+            
+            <!-- Левая колонка: Фотографии -->
+            <div class="lg:col-span-7 space-y-4">
+              <div class="gallery-img-wrap aspect-[4/4] sm:aspect-[5/5] border border-[#E5E3DD]">
+                <img
+                  src="${activeImg}"
+                  alt="${product.name}"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+
+              ${
+                product.gallery.length > 1
+                  ? `
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-4">
+                  ${product.gallery
+                    .map(
+                      (imgUrl, idx) => `
+                    <button
+                      onclick="state.selectedGalleryIndex = ${idx}; render()"
+                      class="aspect-square border overflow-hidden transition-all ${
+                        state.selectedGalleryIndex === idx
+                          ? 'border-[#82B5D1] ring-1 ring-[#82B5D1]'
+                          : 'border-[#E5E3DD] opacity-75 hover:opacity-100'
+                      }"
+                    >
+                      <img src="${imgUrl}" alt="Ракурс ${idx + 1}" class="w-full h-full object-cover" />
+                    </button>
+                  `
+                    )
+                    .join('')}
+                </div>
+              `
+                  : ''
+              }
+            </div>
+
+            <!-- Правая колонка: Информация, покупка, характеристики -->
+            <div class="lg:col-span-5 space-y-8">
+              
+              <div class="space-y-3 border-b border-[#E5E3DD] pb-7">
+                <div class="flex items-center justify-between gap-4">
+                  <span class="text-xs uppercase tracking-[0.16em] text-[#82B5D1]">
+                    ${product.edition} • В наличии в мастерской
+                  </span>
+                  <div class="flex items-center gap-1.5 text-xs text-[#1A1A1A]">
+                    <span class="text-[#82B5D1]">★★★★★</span>
+                    <span>${product.rating.toFixed(1)}</span>
+                    <span class="text-[#6B6B6B]">(${product.reviews.length})</span>
+                  </div>
+                </div>
+
+                <h1 class="font-serif-editorial text-4xl sm:text-5xl font-light text-[#1A1A1A] leading-tight">
+                  ${product.name}
+                </h1>
+
+                <p class="font-serif-editorial text-3xl text-[#1A1A1A] pt-2">
+                  ${formatPrice(product.price)}
+                </p>
+              </div>
+
+              <!-- Кнопки действия -->
+              <div class="space-y-3">
+                <div class="flex gap-3">
+                  <button
+                    onclick="addToCart('${product.id}', event, true)"
+                    class="flex-1 py-4 px-6 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+                  >
+                    Приобрести
+                  </button>
+
+                  <button
+                    onclick="toggleFavorite('${product.id}', event)"
+                    aria-label="В избранное"
+                    class="w-14 border flex items-center justify-center transition-colors ${
+                      fav
+                        ? 'border-[#82B5D1] text-[#82B5D1] bg-[#82B5D1]/10'
+                        : 'border-[#E5E3DD] text-[#1A1A1A] hover:border-[#82B5D1] hover:text-[#82B5D1]'
+                    }"
+                  >
+                    <svg class="w-5 h-5" fill="${fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                  </button>
+                </div>
+
+                <button
+                  onclick="addToCart('${product.id}', event, false)"
+                  class="w-full py-3.5 px-6 border border-[#E5E3DD] text-[#1A1A1A] text-xs uppercase tracking-[0.15em] hover:border-[#82B5D1] hover:text-[#82B5D1] transition-colors"
+                >
+                  ${inCart ? 'Предмет уже в корзине (добавить еще)' : 'Добавить в корзину'}
+                </button>
+              </div>
+
+              <!-- Описание -->
+              <div class="space-y-3 pt-2">
+                <h2 class="text-xs uppercase tracking-[0.15em] text-[#1A1A1A] font-medium">
+                  О предмете
+                </h2>
+                <p class="text-sm text-[#6B6B6B] font-light leading-relaxed">
+                  ${product.description}
+                </p>
+              </div>
+
+              <!-- Характеристики -->
+              <div class="border-t border-[#E5E3DD] pt-6">
+                <h2 class="text-xs uppercase tracking-[0.15em] text-[#1A1A1A] font-medium mb-4">
+                  Характеристики и происхождение
+                </h2>
+                <dl class="divide-y divide-[#E5E3DD] text-sm font-light">
+                  <div class="py-3 flex justify-between gap-4">
+                    <dt class="text-[#6B6B6B]">Материалы</dt>
+                    <dd class="text-[#1A1A1A] text-right">${product.materials.join(', ')}</dd>
+                  </div>
+                  <div class="py-3 flex justify-between gap-4">
+                    <dt class="text-[#6B6B6B]">Габариты</dt>
+                    <dd class="text-[#1A1A1A] text-right">${product.dimensions}</dd>
+                  </div>
+                  <div class="py-3 flex justify-between gap-4">
+                    <dt class="text-[#6B6B6B]">Вес</dt>
+                    <dd class="text-[#1A1A1A] text-right">${product.weight}</dd>
+                  </div>
+                  <div class="py-3 flex justify-between gap-4">
+                    <dt class="text-[#6B6B6B]">Отделка</dt>
+                    <dd class="text-[#1A1A1A] text-right max-w-[60%]">${product.finish}</dd>
+                  </div>
+                  <div class="py-3 flex justify-between gap-4">
+                    <dt class="text-[#6B6B6B]">Производство</dt>
+                    <dd class="text-[#1A1A1A] text-right">Мастерская HITE, Подмосковье</dd>
+                  </div>
+                  <div class="py-3 flex justify-between gap-4">
+                    <dt class="text-[#6B6B6B]">Документация</dt>
+                    <dd class="text-[#82B5D1] text-right">Номерной сертификат подлинности</dd>
+                  </div>
+                </dl>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ОТЗЫВЫ И ФОРМА ОТЗЫВА -->
+          <section class="mt-24 pt-16 border-t border-[#E5E3DD]">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+              
+              <!-- Список отзывов -->
+              <div class="lg:col-span-7 space-y-8">
+                <div>
+                  <p class="text-xs uppercase tracking-[0.16em] text-[#82B5D1] mb-2">Впечатления владельцев</p>
+                  <h2 class="font-serif-editorial text-3xl sm:text-4xl font-light text-[#1A1A1A]">
+                    Отзывы об объекте (${product.reviews.length})
+                  </h2>
+                </div>
+
+                ${
+                  product.reviews.length === 0
+                    ? `
+                  <p class="text-sm text-[#6B6B6B] font-light border border-[#E5E3DD] p-6 bg-[#F2F0EB]/40">
+                    Этот тираж недавно покинул мастерскую. Вы можете стать первым владельцем, оставившим заметку об этом предмете.
+                  </p>
+                `
+                    : `
+                  <div class="divide-y divide-[#E5E3DD] border-t border-b border-[#E5E3DD]">
+                    ${product.reviews
+                      .map(
+                        (rev) => `
+                      <div class="py-6 space-y-2.5">
+                        <div class="flex items-center justify-between gap-4">
+                          <p class="text-sm font-medium text-[#1A1A1A]">${rev.author}</p>
+                          <span class="text-xs text-[#6B6B6B] font-light">${rev.date}</span>
+                        </div>
+                        <div class="text-xs text-[#82B5D1] tracking-widest">
+                          ${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}
+                        </div>
+                        <p class="text-sm text-[#6B6B6B] font-light leading-relaxed pt-1">
+                          ${rev.text}
+                        </p>
+                      </div>
+                    `
+                      )
+                      .join('')}
+                  </div>
+                `
+                }
+              </div>
+
+              <!-- Форма нового отзыва -->
+              <div class="lg:col-span-5">
+                <div class="border border-[#E5E3DD] bg-[#F2F0EB]/55 p-6 sm:p-8 space-y-5">
+                  <h3 class="font-serif-editorial text-2xl sm:text-3xl font-light text-[#1A1A1A]">
+                    Оставить отзыв
+                  </h3>
+                  <p class="text-xs text-[#6B6B6B] font-light">
+                    Поделитесь впечатлениями о фактуре материалов и жизни предмета в вашем пространстве.
+                  </p>
+
+                  <form onsubmit="handleAddReview(event, '${product.id}')" class="space-y-4">
+                    <div>
+                      <label class="block text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-1.5">
+                        Ваше имя или бюро
+                      </label>
+                      <input
+                        id="review-author"
+                        type="text"
+                        required
+                        placeholder="Например, Александр К."
+                        class="w-full bg-[#FAFAF7] border border-[#E5E3DD] px-4 py-3 text-sm font-light focus:outline-none focus:border-[#82B5D1]"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-1.5">
+                        Оценка
+                      </label>
+                      <select
+                        id="review-rating"
+                        class="w-full bg-[#FAFAF7] border border-[#E5E3DD] px-4 py-3 text-sm font-light focus:outline-none focus:border-[#82B5D1]"
+                      >
+                        <option value="5">5 — Исключительно</option>
+                        <option value="4">4 — Очень хорошо</option>
+                        <option value="3">3 — Достойно</option>
+                        <option value="2">2 — Ниже ожиданий</option>
+                        <option value="1">1 — Неудовлетворительно</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-1.5">
+                        Комментарий
+                      </label>
+                      <textarea
+                        id="review-text"
+                        rows="4"
+                        required
+                        placeholder="Опишите ваши впечатления от предмета..."
+                        class="w-full bg-[#FAFAF7] border border-[#E5E3DD] px-4 py-3 text-sm font-light focus:outline-none focus:border-[#82B5D1]"
+                      ></textarea>
+                    </div>
+
+                    <button
+                      type="submit"
+                      class="w-full py-3.5 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.15em] hover:bg-[#82B5D1] transition-colors"
+                    >
+                      Опубликовать отзыв
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ПОХОЖИЕ ТОВАРЫ -->
+          <section class="mt-24 pt-16 border-t border-[#E5E3DD]">
+            <div class="flex items-end justify-between mb-10">
+              <div>
+                <p class="text-xs uppercase tracking-[0.16em] text-[#6B6B6B] mb-2">Дополнить композицию</p>
+                <h2 class="font-serif-editorial text-3xl sm:text-4xl font-light text-[#1A1A1A]">
+                  Похожие объекты
+                </h2>
+              </div>
+              <button
+                onclick="navigateTo('catalog')"
+                class="text-xs uppercase tracking-[0.14em] text-[#1A1A1A] hover:text-[#82B5D1] transition-colors"
+              >
+                Весь каталог →
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              ${related.map((p) => renderProductCard(p, 'grid')).join('')}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function handleAddReview(e, productId) {
+      e.preventDefault();
+      const product = getProductById(productId);
+      if (!product) return;
+
+      const author = document.getElementById('review-author').value.trim();
+      const rating = parseInt(document.getElementById('review-rating').value, 10);
+      const text = document.getElementById('review-text').value.trim();
+
+      if (!author || !text) return;
+
+      const now = new Date();
+      const months = [
+        'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+      ];
+      const formattedDate = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+      product.reviews.unshift({
+        author,
+        date: formattedDate,
+        rating,
+        text
+      });
+
+      showToast('Благодарим за ваш отзыв', 'Заметка добавлена на страницу объекта');
+      render();
+    }
+
+    // -------------------------------------------------------------------------
+    // 10. ЭКРАН 4: ИЗБРАННОЕ
+    // -------------------------------------------------------------------------
+    function renderFavoritesView() {
+      const favProducts = state.favorites.map((id) => getProductById(id)).filter(Boolean);
+
+      return `
+        <div class="view-animate max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
+          <div class="border-b border-[#E5E3DD] pb-8 mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-[#82B5D1] mb-2">Личная подборка</p>
+              <h1 class="font-serif-editorial text-4xl sm:text-5xl font-light text-[#1A1A1A]">
+                Избранные предметы
+              </h1>
+            </div>
+            <p class="text-xs uppercase tracking-[0.14em] text-[#6B6B6B]">
+              Сохранено объектов: ${favProducts.length}
+            </p>
+          </div>
+
+          ${
+            favProducts.length === 0
+              ? `
+            <div class="border border-[#E5E3DD] bg-[#F2F0EB]/45 py-24 px-6 text-center max-w-2xl mx-auto space-y-5">
+              <p class="font-serif-editorial text-3xl sm:text-4xl font-light text-[#1A1A1A]">
+                В избранном пока пусто
+              </p>
+              <p class="text-sm text-[#6B6B6B] font-light max-w-md mx-auto leading-relaxed">
+                Сохраняйте понравившиеся предметы из коллекции HITE, чтобы вернуться к ним при формировании интерьера или обсуждении с архитектором.
+              </p>
+              <div class="pt-2">
+                <button
+                  onclick="navigateTo('catalog', { resetFilters: true })"
+                  class="px-8 py-4 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+                >
+                  Перейти в каталог
+                </button>
+              </div>
+            </div>
+          `
+              : `
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              ${favProducts.map((p) => renderProductCard(p, 'grid')).join('')}
+            </div>
+          `
+          }
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // 11. ЭКРАН 5: КОРЗИНА
+    // -------------------------------------------------------------------------
+    function renderCartView() {
+      const subtotal = getCartSubtotal();
+
+      return `
+        <div class="view-animate max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
+          <div class="border-b border-[#E5E3DD] pb-8 mb-12">
+            <p class="text-xs uppercase tracking-[0.16em] text-[#82B5D1] mb-2">Резервирование</p>
+            <h1 class="font-serif-editorial text-4xl sm:text-5xl font-light text-[#1A1A1A]">
+              Корзина
+            </h1>
+          </div>
+
+          ${
+            state.cart.length === 0
+              ? `
+            <div class="border border-[#E5E3DD] bg-[#F2F0EB]/45 py-24 px-6 text-center max-w-2xl mx-auto space-y-5">
+              <p class="font-serif-editorial text-3xl sm:text-4xl font-light text-[#1A1A1A]">
+                Ваша корзина пуста
+              </p>
+              <p class="text-sm text-[#6B6B6B] font-light max-w-md mx-auto leading-relaxed">
+                Выберите штучные предметы в каталоге, чтобы зарезервировать их за собой в мастерской HITE.
+              </p>
+              <div class="pt-2">
+                <button
+                  onclick="navigateTo('catalog', { resetFilters: true })"
+                  class="px-8 py-4 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+                >
+                  Открыть каталог
+                </button>
+              </div>
+            </div>
+          `
+              : `
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+              
+              <!-- Список позиций -->
+              <div class="lg:col-span-8 divide-y divide-[#E5E3DD] border-t border-b border-[#E5E3DD]">
+                ${state.cart
+                  .map((item) => {
+                    const p = getProductById(item.id);
+                    if (!p) return '';
+                    return `
+                    <div class="py-6 sm:py-8 flex flex-col sm:flex-row gap-6 justify-between">
+                      <div class="flex gap-5 sm:gap-6">
+                        <img
+                          onclick="navigateTo('product', { productId: '${p.id}' })"
+                          src="${p.image}"
+                          alt="${p.name}"
+                          class="w-24 h-32 sm:w-28 sm:h-36 object-cover bg-[#F2F0EB] border border-[#E5E3DD] cursor-pointer flex-shrink-0"
+                        />
+                        <div class="space-y-1.5">
+                          <p class="text-[11px] uppercase tracking-[0.14em] text-[#82B5D1]">${p.edition}</p>
+                          <h3
+                            onclick="navigateTo('product', { productId: '${p.id}' })"
+                            class="font-serif-editorial text-2xl sm:text-3xl font-normal text-[#1A1A1A] hover:text-[#82B5D1] cursor-pointer transition-colors"
+                          >
+                            ${p.name}
+                          </h3>
+                          <p class="text-xs text-[#6B6B6B] font-light">${p.materials.join(', ')}</p>
+                          <p class="text-xs text-[#6B6B6B] font-light pt-1">
+                            Доступно в тираже: ${p.maxAvailable} экз.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div class="flex sm:flex-col items-center sm:items-end justify-between gap-4">
+                        <p class="text-lg font-normal text-[#1A1A1A]">
+                          ${formatPrice(p.price * item.qty)}
+                        </p>
+
+                        <div class="flex items-center gap-4">
+                          <!-- Управление количеством -->
+                          <div class="inline-flex items-center border border-[#E5E3DD]">
+                            <button
+                              onclick="updateCartQty('${p.id}', -1)"
+                              class="w-9 h-9 flex items-center justify-center text-[#1A1A1A] hover:bg-[#F2F0EB] transition-colors"
+                              aria-label="Уменьшить количество"
+                            >
+                              −
+                            </button>
+                            <span class="w-9 text-center text-sm font-normal">${item.qty}</span>
+                            <button
+                              onclick="updateCartQty('${p.id}', 1)"
+                              class="w-9 h-9 flex items-center justify-center text-[#1A1A1A] hover:bg-[#F2F0EB] transition-colors"
+                              aria-label="Увеличить количество"
+                            >
+                              +
+                            </button>
+                          </div>
+
+                          <button
+                            onclick="removeFromCart('${p.id}')"
+                            class="text-xs uppercase tracking-[0.12em] text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors"
+                          >
+                            Удалить
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                  })
+                  .join('')}
+              </div>
+
+              <!-- Блок Итога -->
+              <div class="lg:col-span-4 border border-[#E5E3DD] bg-[#F2F0EB]/65 p-6 sm:p-8 space-y-6">
+                <h2 class="font-serif-editorial text-2xl sm:text-3xl font-light text-[#1A1A1A]">
+                  Итог резерва
+                </h2>
+
+                <div class="space-y-3 text-sm font-light border-b border-[#E5E3DD] pb-5">
+                  <div class="flex justify-between">
+                    <span class="text-[#6B6B6B]">Предметы (${getCartCount()})</span>
+                    <span class="text-[#1A1A1A]">${formatPrice(subtotal)}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-[#6B6B6B]">Бережная галерейная доставка</span>
+                    <span class="text-[#82B5D1]">Включено</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-[#6B6B6B]">Индивидуальный деревянный кофр</span>
+                    <span class="text-[#1A1A1A]">Включено</span>
+                  </div>
+                </div>
+
+                <div class="flex items-baseline justify-between">
+                  <span class="text-xs uppercase tracking-[0.14em] text-[#6B6B6B]">Общая стоимость</span>
+                  <span class="font-serif-editorial text-3xl text-[#1A1A1A]">${formatPrice(subtotal)}</span>
+                </div>
+
+                <button
+                  onclick="navigateTo('checkout')"
+                  class="w-full py-4 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+                >
+                  Перейти к оформлению
+                </button>
+
+                <p class="text-[11px] text-[#6B6B6B] font-light leading-relaxed">
+                  Каждый предмет застрахован на полную стоимость на время транспортировки из мастерской в Подмосковье до вашего интерьера.
+                </p>
+              </div>
+
+            </div>
+          `
+          }
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // 12. ЭКРАН 6: ОФОРМЛЕНИЕ ЗАКАЗА И ПОДТВЕРЖДЕНИЕ
+    // -------------------------------------------------------------------------
+    function renderCheckoutView() {
+      if (state.cart.length === 0) {
+        return renderCartView();
+      }
+      const subtotal = getCartSubtotal();
+
+      return `
+        <div class="view-animate max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
+          <div class="border-b border-[#E5E3DD] pb-8 mb-12 flex items-center justify-between">
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-[#82B5D1] mb-2">Шаг 2 из 2</p>
+              <h1 class="font-serif-editorial text-4xl sm:text-5xl font-light text-[#1A1A1A]">
+                Оформление заказа
+              </h1>
+            </div>
+            <button
+              onclick="navigateTo('cart')"
+              class="text-xs uppercase tracking-[0.14em] text-[#6B6B6B] hover:text-[#1A1A1A]"
+            >
+              ← Вернуться в корзину
+            </button>
+          </div>
+
+          <form onsubmit="handleOrderSubmit(event)" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            
+            <!-- Левая часть: Форма доставки и оплаты -->
+            <div class="lg:col-span-7 space-y-12">
+              
+              <!-- Данные получателя -->
+              <section class="space-y-6">
+                <h2 class="font-serif-editorial text-2xl sm:text-3xl font-light text-[#1A1A1A] border-b border-[#E5E3DD] pb-3">
+                  1. Контактные данные получателя
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div class="sm:col-span-2">
+                    <label class="block text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-2">
+                      Имя и фамилия *
+                    </label>
+                    <input
+                      id="checkout-name"
+                      type="text"
+                      required
+                      placeholder="Константин Воронцов"
+                      class="w-full bg-transparent border border-[#E5E3DD] px-4 py-3.5 text-sm font-light focus:outline-none focus:border-[#82B5D1]"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-2">
+                      Телефон *
+                    </label>
+                    <input
+                      id="checkout-phone"
+                      type="tel"
+                      required
+                      placeholder="+7 (999) 000-00-00"
+                      class="w-full bg-transparent border border-[#E5E3DD] px-4 py-3.5 text-sm font-light focus:outline-none focus:border-[#82B5D1]"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-2">
+                      Электронная почта *
+                    </label>
+                    <input
+                      id="checkout-email"
+                      type="email"
+                      required
+                      placeholder="vorontsov@domain.ru"
+                      class="w-full bg-transparent border border-[#E5E3DD] px-4 py-3.5 text-sm font-light focus:outline-none focus:border-[#82B5D1]"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <!-- Доставка -->
+              <section class="space-y-6">
+                <h2 class="font-serif-editorial text-2xl sm:text-3xl font-light text-[#1A1A1A] border-b border-[#E5E3DD] pb-3">
+                  2. Способ и адрес доставки
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label class="border border-[#E5E3DD] p-4 cursor-pointer flex items-start gap-3 hover:border-[#82B5D1] transition-colors">
+                    <input type="radio" name="deliveryMethod" value="Бережная доставка службой HITE" checked class="mt-1 accent-[#1A1A1A]" />
+                    <div>
+                      <p class="text-sm font-normal text-[#1A1A1A]">Служба доставки HITE</p>
+                      <p class="text-xs text-[#6B6B6B] font-light mt-1">
+                        Спецтранспорт с климат-контролем, занос и распаковка в интерьере
+                      </p>
+                    </div>
+                  </label>
+
+                  <label class="border border-[#E5E3DD] p-4 cursor-pointer flex items-start gap-3 hover:border-[#82B5D1] transition-colors">
+                    <input type="radio" name="deliveryMethod" value="Самовывоз из мастерской (Жуковка)" class="mt-1 accent-[#1A1A1A]" />
+                    <div>
+                      <p class="text-sm font-normal text-[#1A1A1A]">Самовывоз из мастерской</p>
+                      <p class="text-xs text-[#6B6B6B] font-light mt-1">
+                        Подмосковье, д. Жуковка, по согласованию с куратором
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  <div>
+                    <label class="block text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-2">
+                      Город *
+                    </label>
+                    <input
+                      id="checkout-city"
+                      type="text"
+                      required
+                      value="Москва"
+                      class="w-full bg-transparent border border-[#E5E3DD] px-4 py-3.5 text-sm font-light focus:outline-none focus:border-[#82B5D1]"
+                    />
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="block text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-2">
+                      Адрес доставки *
+                    </label>
+                    <input
+                      id="checkout-address"
+                      type="text"
+                      required
+                      placeholder="Улица, дом, квартира или название поселка"
+                      class="w-full bg-transparent border border-[#E5E3DD] px-4 py-3.5 text-sm font-light focus:outline-none focus:border-[#82B5D1]"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <!-- Оплата -->
+              <section class="space-y-6">
+                <h2 class="font-serif-editorial text-2xl sm:text-3xl font-light text-[#1A1A1A] border-b border-[#E5E3DD] pb-3">
+                  3. Способ оплаты
+                </h2>
+
+                <div class="space-y-3">
+                  <label class="border border-[#E5E3DD] p-4 cursor-pointer flex items-center justify-between gap-4 hover:border-[#82B5D1] transition-colors">
+                    <div class="flex items-center gap-3">
+                      <input type="radio" name="paymentMethod" value="Банковская карта онлайн" checked class="accent-[#1A1A1A]" />
+                      <div>
+                        <p class="text-sm font-normal text-[#1A1A1A]">Банковская карта онлайн</p>
+                        <p class="text-xs text-[#6B6B6B] font-light">Мгновенное подтверждение резерва экземпляра</p>
+                      </div>
+                    </div>
+                    <span class="text-xs text-[#82B5D1] uppercase tracking-wider">Без комиссии</span>
+                  </label>
+
+                  <label class="border border-[#E5E3DD] p-4 cursor-pointer flex items-center justify-between gap-4 hover:border-[#82B5D1] transition-colors">
+                    <div class="flex items-center gap-3">
+                      <input type="radio" name="paymentMethod" value="Оплата по счету (частные клиенты и бюро)" class="accent-[#1A1A1A]" />
+                      <div>
+                        <p class="text-sm font-normal text-[#1A1A1A]">Оплата по счету</p>
+                        <p class="text-xs text-[#6B6B6B] font-light">Для частных коллекционеров и архитектурных бюро</p>
+                      </div>
+                    </div>
+                  </label>
+
+                  <label class="border border-[#E5E3DD] p-4 cursor-pointer flex items-center justify-between gap-4 hover:border-[#82B5D1] transition-colors">
+                    <div class="flex items-center gap-3">
+                      <input type="radio" name="paymentMethod" value="Оплата после осмотра при получении" class="accent-[#1A1A1A]" />
+                      <div>
+                        <p class="text-sm font-normal text-[#1A1A1A]">Оплата при получении после осмотра</p>
+                        <p class="text-xs text-[#6B6B6B] font-light">Доступно для Москвы и Московской области</p>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </section>
+            </div>
+
+            <!-- Правая часть: Сводка заказа -->
+            <div class="lg:col-span-5 border border-[#E5E3DD] bg-[#F2F0EB]/65 p-6 sm:p-8 space-y-6 lg:sticky lg:top-28">
+              <h2 class="font-serif-editorial text-2xl sm:text-3xl font-light text-[#1A1A1A]">
+                Ваш заказ
+              </h2>
+
+              <div class="divide-y divide-[#E5E3DD] border-t border-b border-[#E5E3DD]">
+                ${state.cart
+                  .map((item) => {
+                    const p = getProductById(item.id);
+                    if (!p) return '';
+                    return `
+                    <div class="py-4 flex items-center justify-between gap-4">
+                      <div class="flex items-center gap-3.5">
+                        <img src="${p.image}" alt="${p.name}" class="w-14 h-16 object-cover border border-[#E5E3DD]" />
+                        <div>
+                          <p class="font-serif-editorial text-lg text-[#1A1A1A] leading-snug">${p.name}</p>
+                          <p class="text-xs text-[#6B6B6B] font-light">${p.edition} × ${item.qty}</p>
+                        </div>
+                      </div>
+                      <span class="text-sm font-normal text-[#1A1A1A] whitespace-nowrap">
+                        ${formatPrice(p.price * item.qty)}
+                      </span>
+                    </div>
+                  `;
+                  })
+                  .join('')}
+              </div>
+
+              <div class="space-y-2.5 text-sm font-light">
+                <div class="flex justify-between">
+                  <span class="text-[#6B6B6B]">Стоимость предметов</span>
+                  <span>${formatPrice(subtotal)}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#6B6B6B]">Страхование и доставка</span>
+                  <span class="text-[#82B5D1]">0 ₽</span>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-[#E5E3DD] flex items-baseline justify-between">
+                <span class="text-xs uppercase tracking-[0.14em] text-[#6B6B6B]">Итого к оплате</span>
+                <span class="font-serif-editorial text-3xl text-[#1A1A1A]">${formatPrice(subtotal)}</span>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full py-4 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+              >
+                Оплатить заказ
+              </button>
+
+              <p class="text-[11px] text-[#6B6B6B] font-light text-center leading-relaxed">
+                Нажимая «Оплатить заказ», вы подтверждаете резервирование номерных предметов коллекции HITE.
+              </p>
+            </div>
+
+          </form>
+        </div>
+      `;
+    }
+
+    function handleOrderSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('checkout-name').value.trim();
+      const email = document.getElementById('checkout-email').value.trim();
+      const city = document.getElementById('checkout-city').value.trim();
+      const address = document.getElementById('checkout-address').value.trim();
+      const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked')?.value || '';
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || '';
+
+      const orderedItems = state.cart.map((item) => {
+        const p = getProductById(item.id);
+        return {
+          name: p.name,
+          edition: p.edition,
+          qty: item.qty,
+          total: p.price * item.qty
+        };
+      });
+
+      const orderNumber = 'HT-' + Math.floor(100000 + Math.random() * 900000);
+
+      state.lastOrder = {
+        orderNumber,
+        name,
+        email,
+        city,
+        address,
+        deliveryMethod,
+        paymentMethod,
+        items: orderedItems,
+        total: getCartSubtotal()
+      };
+
+      state.cart = [];
+      navigateTo('orderSuccess');
+    }
+
+    function renderOrderSuccessView() {
+      const order = state.lastOrder;
+      if (!order) {
+        return renderHomeView();
+      }
+
+      return `
+        <div class="view-animate max-w-3xl mx-auto px-4 sm:px-8 py-16 lg:py-24">
+          <div class="border border-[#E5E3DD] bg-[#F2F0EB]/55 p-8 sm:p-14 text-center space-y-6">
+            <div class="w-12 h-12 mx-auto border border-[#82B5D1] flex items-center justify-center text-[#82B5D1]">
+              ✓
+            </div>
+
+            <p class="text-xs uppercase tracking-[0.2em] text-[#82B5D1]">
+              Заказ подтвержден • Сертификат ${order.orderNumber}
+            </p>
+
+            <h1 class="font-serif-editorial text-4xl sm:text-5xl font-light text-[#1A1A1A]">
+              Благодарим, ${order.name}
+            </h1>
+
+            <p class="text-sm text-[#6B6B6B] font-light max-w-lg mx-auto leading-relaxed">
+              Ваши предметы закреплены за вами в реестре мастерской HITE. Куратор свяжется с вами в течение двух часов для согласования точного времени бережной доставки.
+            </p>
+
+            <div class="border-t border-b border-[#E5E3DD] py-6 my-6 text-left space-y-3 text-sm font-light">
+              <div class="flex justify-between gap-4">
+                <span class="text-[#6B6B6B]">Номер заказа и паспорта:</span>
+                <span class="text-[#1A1A1A] font-normal">${order.orderNumber}</span>
+              </div>
+              <div class="flex justify-between gap-4">
+                <span class="text-[#6B6B6B]">Доставка:</span>
+                <span class="text-[#1A1A1A] text-right">${order.deliveryMethod} (${order.city}, ${order.address})</span>
+              </div>
+              <div class="flex justify-between gap-4">
+                <span class="text-[#6B6B6B]">Оплата:</span>
+                <span class="text-[#1A1A1A] text-right">${order.paymentMethod}</span>
+              </div>
+              <div class="pt-3 border-t border-[#E5E3DD] space-y-1.5">
+                ${order.items
+                  .map(
+                    (i) => `
+                  <div class="flex justify-between text-xs">
+                    <span class="text-[#1A1A1A]">${i.name} (${i.edition}) × ${i.qty}</span>
+                    <span>${formatPrice(i.total)}</span>
+                  </div>
+                `
+                  )
+                  .join('')}
+              </div>
+              <div class="pt-3 border-t border-[#E5E3DD] flex justify-between items-baseline">
+                <span class="text-xs uppercase tracking-[0.12em] text-[#6B6B6B]">Итоговая сумма</span>
+                <span class="font-serif-editorial text-2xl text-[#1A1A1A]">${formatPrice(order.total)}</span>
+              </div>
+            </div>
+
+            <button
+              onclick="navigateTo('home')"
+              class="px-8 py-4 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+            >
+              Вернуться в галерею HITE
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // 13. ДОПОЛНИТЕЛЬНЫЙ ЭКРАН: О МАСТЕРСКОЙ В ПОДМОСКОВЬЕ
+    // -------------------------------------------------------------------------
+    function renderWorkshopView() {
+      return `
+        <div class="view-animate max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-12 lg:py-20 space-y-20">
+          <div class="max-w-3xl space-y-6">
+            <p class="text-xs uppercase tracking-[0.2em] text-[#82B5D1]">Философия и ремесло</p>
+            <h1 class="font-serif-editorial text-4xl sm:text-6xl font-light text-[#1A1A1A] leading-tight">
+              Мастерская HITE в Подмосковье
+            </h1>
+            <p class="text-base sm:text-lg text-[#6B6B6B] font-light leading-relaxed">
+              Мы отказались от конвейерного производства в пользу тихой, вдумчивой работы с природными материалами. Каждый предмет HITE рождается на стыке современной скульптуры и традиционного ремесла.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-7">
+              <div class="gallery-img-wrap aspect-[16/10] border border-[#E5E3DD]">
+                <img
+                  src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1400&q=85"
+                  alt="Мастерская HITE"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div class="lg:col-span-5 space-y-6">
+              <h2 class="font-serif-editorial text-3xl sm:text-4xl font-light text-[#1A1A1A]">
+                Честная материальность
+              </h2>
+              <p class="text-sm text-[#6B6B6B] font-light leading-relaxed">
+                Мы не маскируем природные несовершенства: поры травертина остаются открытыми, массив сухостойного дуба сохраняет трещины времени, а дикая глина хранит следы рук керамиста. Благодаря этому ни один экземпляр в серии не повторяет другой.
+              </p>
+              <ul class="space-y-3 text-sm text-[#1A1A1A] font-light border-t border-[#E5E3DD] pt-5">
+                <li>— Нулевое использование синтетических пен и токсичных лаков</li>
+                <li>— Ограниченные серии от 5 до 16 экземпляров с гравировкой номера</li>
+                <li>— Пожизненная гарантия и реставрационное сопровождение в мастерской</li>
+              </ul>
+              <div class="pt-2">
+                <button
+                  onclick="navigateTo('catalog', { resetFilters: true })"
+                  class="px-8 py-4 bg-[#1A1A1A] text-white text-xs uppercase tracking-[0.16em] hover:bg-[#82B5D1] transition-colors"
+                >
+                  Перейти к объектам коллекции
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // 14. ГЛАВНЫЙ РЕНДЕРЕР
+    // -------------------------------------------------------------------------
+    function render() {
+      const root = document.getElementById('app-root');
+      updateHeaderBadges();
+
+      switch (state.view) {
+        case 'catalog':
+          root.innerHTML = renderCatalogView();
+          break;
+        case 'product':
+          root.innerHTML = renderProductView();
+          break;
+        case 'favorites':
+          root.innerHTML = renderFavoritesView();
+          break;
+        case 'cart':
+          root.innerHTML = renderCartView();
+          break;
+        case 'checkout':
+          root.innerHTML = renderCheckoutView();
+          break;
+        case 'orderSuccess':
+          root.innerHTML = renderOrderSuccessView();
+          break;
+        case 'workshop':
+          root.innerHTML = renderWorkshopView();
+          break;
+        case 'home':
+        default:
+          root.innerHTML = renderHomeView();
+          break;
+      }
+    }
+
+    // Инициализация при загрузке
+    window.addEventListener('DOMContentLoaded', () => {
+      render();
+    });
+  </script>
+</body>
+</html>
